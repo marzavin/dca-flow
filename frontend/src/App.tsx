@@ -1,4 +1,5 @@
 import "./App.less";
+import ChartTabs from "./components/ChartTabs";
 import MetricCard from "./components/MetricCard";
 import data from "./data.json";
 
@@ -35,10 +36,7 @@ function App() {
           <MetricCard title="Assets" value={data.assets.length} type="text" />
         </section>
 
-        <section className="chart-block">
-          <div className="block-header">Performance</div>
-          <div className="chart-placeholder"></div>
-        </section>
+        <ChartTabs />
 
         <section className="table-block">
           <div className="block-header">Assets</div>

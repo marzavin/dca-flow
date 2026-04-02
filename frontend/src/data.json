@@ -3,10 +3,19 @@
   "totalInvested": 228.12,
   "portfolioValue": 250.78,
   "assets": [
-    { "name": "BTC" },
-    { "name": "ETH" },
-    { "name": "SOL" },
-    { "name": "RAY" },
-    { "name": "BAT" }
+    { "key": "BTC", "value": 40000 },
+    { "key": "ETH", "value": 15000 },
+    { "key": "SOL", "value": 8500 },
+    { "key": "RAY", "value": 1000 },
+    { "key": "BAT", "value": 1500 }
+  ],
+  "performance": [
+    { "key": "Mon", "value": 90000 },
+    { "key": "Tue", "value": 95000 },
+    { "key": "Wed", "value": 92000 },
+    { "key": "Thu", "value": 98000 },
+    { "key": "Fri", "value": 102000 },
+    { "key": "Sat", "value": 100000 },
+    { "key": "Sun", "value": 104000 }
   ]
 }
