@@ -14,7 +14,7 @@ function AllocationChart({ data }: Props) {
   return (
     <div className="chart-container pie-wrapper">
       <div className="pie-chart">
-        <ResponsiveContainer width="100%" height={260}>
+        <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie data={data} dataKey="value" nameKey="key" outerRadius={100} isAnimationActive={false}>
               {data.map((_, index) => (

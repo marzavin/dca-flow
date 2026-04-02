@@ -3,11 +3,11 @@
   "totalInvested": 228.12,
   "portfolioValue": 250.78,
   "assets": [
-    { "key": "BTC", "value": 40000 },
-    { "key": "ETH", "value": 15000 },
-    { "key": "SOL", "value": 8500 },
-    { "key": "RAY", "value": 1000 },
-    { "key": "BAT", "value": 1500 }
+    { "key": "BTC", "value": 40000, "averagePrice": 67894, "dailyPerformance": 0.035, "holdings": 0.785 },
+    { "key": "ETH", "value": 15000, "averagePrice": 2007.5, "dailyPerformance": -0.027, "holdings": 7.46 },
+    { "key": "SOL", "value": 8500, "averagePrice": 84.342, "dailyPerformance": 0.00557, "holdings": 100.011 },
+    { "key": "RAY", "value": 1000, "averagePrice": 0.08, "dailyPerformance": 0, "holdings": 100783.12 },
+    { "key": "BAT", "value": 1500, "averagePrice": 0.0063, "dailyPerformance": -0.045, "holdings": 350921.78 }
   ],
   "performance": [
     { "key": "Mon", "value": 90000 },

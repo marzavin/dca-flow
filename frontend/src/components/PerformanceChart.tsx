@@ -1,12 +1,4 @@
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import KeyValueModel from "../types/KeyValueModel";
 
 interface Props {
