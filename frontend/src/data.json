@@ -1,0 +1,12 @@
+{
+  "portfolioName": "Crypto Growth",
+  "totalInvested": 228.12,
+  "portfolioValue": 250.78,
+  "assets": [
+    { "name": "BTC" },
+    { "name": "ETH" },
+    { "name": "SOL" },
+    { "name": "RAY" },
+    { "name": "BAT" }
+  ]
+}
