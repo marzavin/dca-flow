@@ -1,6 +1,7 @@
 using DCAFlow.Contracts.Documents;
 using DCAFlow.Data.Repositories;
 using DCAFlow.Services;
+using DCAFlow.Settings;
 using LiteDB;
 using System.Reflection;
 
@@ -29,6 +30,16 @@ builder.Services.AddSingleton(sp =>
     mapper.Entity<ExchangeRateDocument>().Id(x => x.Id);
 
     return new LiteDatabase(connectionString, mapper);
+});
+
+builder.Services.AddMemoryCache();
+
+var coinGeckoSetting = builder.Configuration.GetSection("CoinGecko").Get<CoinGeckoSettings>();
+builder.Services.AddSingleton(coinGeckoSetting);
+
+builder.Services.AddHttpClient(DCAFlow.Constants.HttpClients.CoinGeckoClient, (_, client) =>
+{
+    client.BaseAddress = new Uri(coinGeckoSetting.BaseUrl);
 });
 
 builder.Services.AddScoped<TransactionRepository>();

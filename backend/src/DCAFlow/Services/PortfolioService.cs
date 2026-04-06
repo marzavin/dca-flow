@@ -40,7 +40,7 @@ public sealed class PortfolioService
         var totalInvested = assets.Sum(x => x.TotalInvested);
         var holdingsValue = assets.Sum(x => x.HoldingsValue);
 
-        return new PortfolioModel
+        var portfolio = new PortfolioModel
         {
             Id = portfolioDocument.Id,
             Name = portfolioDocument.Name,
@@ -51,6 +51,19 @@ public sealed class PortfolioService
             Allocation = CalculateAllocation(assets),
             Investments = GetInvestments(transactions)
         };
+
+        var allTickers = portfolio.Assets.Select(x => x.Ticker).ToList();
+        var startDate = portfolio.Investments.FirstOrDefault()?.Key;
+
+        if (startDate.HasValue && allTickers.Count > 0)
+        {
+            foreach (var ticker in allTickers)
+            {
+                await _databaseRateProvider.GetHistoricalRatesAsync(ticker, startDate.Value, DateTime.UtcNow.AddDays(-1), cancellationToken);
+            }
+        }
+
+        return portfolio;
     }
 
     private List<KeyValueModel<DateTime, double>> GetInvestments(List<TransactionModel> transactions)
