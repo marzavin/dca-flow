@@ -12,16 +12,16 @@ public class ExchangeRateRepository
         _database = database ?? throw new ArgumentNullException(nameof(database));
     }
 
-    public ExchangeRateDocument GetRateOnDate(string ticker, DateTime ts)
+    public ExchangeRateDocument GetRateOnDate(string ticker, DateOnly ts)
     {
         var collection = _database.GetCollection<ExchangeRateDocument>("rates");
 
         return collection.Find(x => x.Ticker == ticker && x.Timestamp == ts).FirstOrDefault();
     }
 
-    public List<ExchangeRateDocument> GetHistoricalRates(string ticker, DateTime from, DateTime to)
+    public List<ExchangeRateDocument> GetHistoricalDailyRates(string ticker, DateOnly from, DateOnly to)
     {
-        var collection = _database.GetCollection<ExchangeRateDocument>("rates");
+        var collection = _database.GetCollection<ExchangeRateDocument>("dailyRates");
 
         return [.. collection.Find(x => x.Ticker == ticker && x.Timestamp >= from && x.Timestamp <= to)];
     }

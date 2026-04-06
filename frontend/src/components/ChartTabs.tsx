@@ -3,11 +3,11 @@ import AllocationChart from './AllocationChart';
 import PerformanceChart from './PerformanceChart';
 import PortfolioModel from '../types/PortfolioModel';
 
-type Tab = 'allocation' | 'investments';
+type Tab = 'allocation' | 'performance';
 
 const tabs = [
   { id: 'allocation', label: 'Allocation' },
-  { id: 'investments', label: 'Investments' }
+  { id: 'performance', label: 'Performance' }
 ];
 
 interface Props {
@@ -31,7 +31,12 @@ function ChartTabs({ data }: Props) {
         ))}
       </div>
       {activeTab === 'allocation' && <AllocationChart data={data.allocation} />}
-      {activeTab === 'investments' && <PerformanceChart data={data.investments} />}
+      {activeTab === 'performance' && (
+        <PerformanceChart
+          totalInvestedTimeline={data.totalInvestedTimeline}
+          holdingsValueTimeline={data.holdingsValueTimeline}
+        />
+      )}
     </div>
   );
 }

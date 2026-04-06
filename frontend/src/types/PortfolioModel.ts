@@ -10,7 +10,8 @@ interface PortfolioModel {
   totalReturn: number;
   assets: AssetModel[];
   allocation: FractionModel[];
-  investments: KeyValueModel<Date, number>[];
+  totalInvestedTimeline: KeyValueModel<Date, number>[];
+  holdingsValueTimeline: KeyValueModel<Date, number>[];
 }
 
 export default PortfolioModel;

@@ -4,9 +4,9 @@ namespace DCAFlow.Services;
 
 public interface IExchangeRateProvider
 {
-    public Task<ExchangeRateModel> GetExchangeRateOnDateAsync(string ticker, DateTime ts, CancellationToken cancellationToken = default);
+    public Task<KeyValueModel<DateOnly, double>> GetExchangeRateOnDateAsync(string ticker, DateOnly ts, CancellationToken cancellationToken = default);
 
-    public Task<ExchangeRateModel> GetCurrentExchageRateAsync(string ticker, CancellationToken cancellationToken = default);
+    public Task<KeyValueModel<DateOnly, double>> GetCurrentExchageRateAsync(string ticker, CancellationToken cancellationToken = default);
 
-    public Task<List<ExchangeRateModel>> GetHistoricalRatesAsync(string ticker, DateTime from, DateTime to, CancellationToken cancellationToken = default);
+    public Task<List<KeyValueModel<DateOnly, double>>> GetHistoricalRatesAsync(string ticker, DateOnly from, DateOnly to, CancellationToken cancellationToken = default);
 }

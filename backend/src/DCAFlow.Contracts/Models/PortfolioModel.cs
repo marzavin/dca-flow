@@ -16,5 +16,7 @@ public class PortfolioModel
 
     public List<FractionModel> Allocation { get; set; }
 
-    public List<KeyValueModel<DateTime, double>> Investments { get; set; }
+    public List<KeyValueModel<DateOnly, double>> TotalInvestedTimeline { get; set; }
+
+    public List<KeyValueModel<DateOnly, double>> HoldingsValueTimeline { get; set; }
 }

@@ -46,7 +46,7 @@ builder.Services.AddScoped<TransactionRepository>();
 builder.Services.AddScoped<PortfolioRepository>();
 builder.Services.AddScoped<ExchangeRateRepository>();
 builder.Services.AddScoped<CoinGeckoRateProvider>();
-builder.Services.AddScoped<DatabaseRateProvider>();
+builder.Services.AddScoped<ExchangeRateProvider>();
 builder.Services.AddScoped<PortfolioService>();
 
 builder.Services.AddControllers();

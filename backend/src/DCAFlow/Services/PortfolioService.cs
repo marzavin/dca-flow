@@ -8,12 +8,12 @@ public sealed class PortfolioService
 {
     private readonly PortfolioRepository _portfolioRepository;
     private readonly TransactionRepository _transactionRepository;
-    private readonly DatabaseRateProvider _databaseRateProvider;
+    private readonly ExchangeRateProvider _databaseRateProvider;
 
     public PortfolioService(
         PortfolioRepository portfolioRepository,
         TransactionRepository transactionRepository,
-        DatabaseRateProvider databaseRateProvider)
+        ExchangeRateProvider databaseRateProvider)
     {
         _portfolioRepository = portfolioRepository ?? throw new ArgumentNullException(nameof(portfolioRepository));
         _transactionRepository = transactionRepository ?? throw new ArgumentNullException(nameof(transactionRepository));
@@ -48,50 +48,76 @@ public sealed class PortfolioService
             TotalInvested = totalInvested,
             HoldingsValue = holdingsValue,
             TotalReturn = CalculateTotalReturn(totalInvested, holdingsValue),
-            Allocation = CalculateAllocation(assets),
-            Investments = GetInvestments(transactions)
+            Allocation = CalculateAllocation(assets)
         };
 
-        var allTickers = portfolio.Assets.Select(x => x.Ticker).ToList();
-        var startDate = portfolio.Investments.FirstOrDefault()?.Key;
+        var timelines = await GetTimelinesAsync(transactions, cancellationToken);
 
-        if (startDate.HasValue && allTickers.Count > 0)
-        {
-            foreach (var ticker in allTickers)
-            {
-                await _databaseRateProvider.GetHistoricalRatesAsync(ticker, startDate.Value, DateTime.UtcNow.AddDays(-1), cancellationToken);
-            }
-        }
+        portfolio.TotalInvestedTimeline = timelines.Item1;
+        portfolio.HoldingsValueTimeline = timelines.Item2;
 
         return portfolio;
     }
 
-    private List<KeyValueModel<DateTime, double>> GetInvestments(List<TransactionModel> transactions)
+    private async Task<Tuple<List<KeyValueModel<DateOnly, double>>, List<KeyValueModel<DateOnly, double>>>> GetTimelinesAsync(
+        List<TransactionModel> transactions,
+        CancellationToken cancellationToken)
     {
         if (transactions is null || transactions.Count == 0)
         {
-            return [];
+            return new Tuple<List<KeyValueModel<DateOnly, double>>, List<KeyValueModel<DateOnly, double>>>([], []);
         }
 
-        var ordered = transactions.OrderBy(x => x.Timestamp).ToList();
-        
-        var date = ordered.First().Timestamp.AddDays(-1).Date;
-        var value = 0D;
+        var allTickers = transactions.Select(x => x.Ticker).Distinct().ToList();
+        var startDate = DateOnly.FromDateTime(transactions.Min(x => x.Timestamp).AddDays(-1));
 
-        var result = new List<KeyValueModel<DateTime, double>> { new() { Key = date, Value = value } };
+        var ratesByTickers = new Dictionary<string, List<KeyValueModel<DateOnly, double>>>();
+        var valuesByTickers = new Dictionary<string, double>();
+        var totalInvestedValue = 0D;
 
-        var currentDate = DateTime.UtcNow.Date;
+        foreach (var ticker in allTickers)
+        {
+            valuesByTickers.Add(ticker, 0D);
+
+            var rates = await _databaseRateProvider.GetHistoricalRatesAsync(ticker, startDate, DateOnly.FromDateTime(DateTime.UtcNow), cancellationToken);
+            ratesByTickers.Add(ticker, rates);
+        }
+
+        var orderedTransactions = transactions.OrderBy(x => x.Timestamp).ToList();
+
+        var totalInvestedTimeline = new List<KeyValueModel<DateOnly, double>>();
+        var holdingsValueTimeline = new List<KeyValueModel<DateOnly, double>>();
+
+        var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+        var date = startDate;
 
         while (date < currentDate)
-        { 
+        {
+            var transactionsOnDate = transactions.Where(x => DateOnly.FromDateTime(x.Timestamp) == date).ToList();
+
+            totalInvestedValue += transactionsOnDate.Sum(x => x.Cost);
+            totalInvestedTimeline.Add(new KeyValueModel<DateOnly, double> { Key = date, Value = totalInvestedValue });
+
+            var holdingsValueOnDate = new KeyValueModel<DateOnly, double> { Key = date, Value = 0D };
+
+            foreach (var ticker in allTickers)
+            {
+                var tickerTransactions = transactionsOnDate.Where(x => x.Ticker == ticker).ToList();
+                if (tickerTransactions.Count != 0)
+                {
+                    valuesByTickers[ticker] += tickerTransactions.Sum(x => x.Type == TransactionType.Buy ? x.Amount : -x.Amount);
+                }
+
+                var rate = ratesByTickers[ticker].First(x => x.Key == date).Value;
+                holdingsValueOnDate.Value += rate * valuesByTickers[ticker];
+            }
+
+            holdingsValueTimeline.Add(holdingsValueOnDate);
+
             date = date.AddDays(1);
-
-            value += transactions.Where(x => x.Timestamp.Date == date).Sum(x => x.Cost);
-
-            result.Add(new KeyValueModel<DateTime, double> { Key = date, Value = value });
         }
 
-        return result;
+        return new Tuple<List<KeyValueModel<DateOnly, double>>, List<KeyValueModel<DateOnly, double>>>(totalInvestedTimeline, holdingsValueTimeline);
     }
 
     private async Task<List<AssetModel>> GetAssetsAsync(List<TransactionModel> transactions, CancellationToken cancellationToken = default)
@@ -120,7 +146,7 @@ public sealed class PortfolioService
         var model = new AssetModel
         {
             Ticker = ticker,
-            CurrentMarketPrice = currentRate.Rate,
+            CurrentMarketPrice = currentRate.Value,
             TotalHoldings = 0D,
             TotalInvested = 0D
         };
