@@ -1,17 +1,21 @@
-import { useState } from "react";
-import AllocationChart from "./allocationChart";
-import data from "../data.json";
-import PerformanceChart from "./PerformanceChart";
+import { useState } from 'react';
+import AllocationChart from './AllocationChart';
+import PerformanceChart from './PerformanceChart';
+import PortfolioModel from '../types/PortfolioModel';
 
-type Tab = "allocation" | "performance";
+type Tab = 'allocation' | 'investments';
 
 const tabs = [
-  { id: "allocation", label: "Allocation" },
-  { id: "performance", label: "Performance" }
+  { id: 'allocation', label: 'Allocation' },
+  { id: 'investments', label: 'Investments' }
 ];
 
-function ChartTabs() {
-  const [activeTab, setActiveTab] = useState<Tab>("allocation");
+interface Props {
+  data: PortfolioModel;
+}
+
+function ChartTabs({ data }: Props) {
+  const [activeTab, setActiveTab] = useState<Tab>('allocation');
 
   return (
     <div className="chart-block">
@@ -19,15 +23,15 @@ function ChartTabs() {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            className={activeTab === tab.id ? "active" : ""}
+            className={activeTab === tab.id ? 'active' : ''}
             onClick={() => setActiveTab(tab.id as Tab)}
           >
             {tab.label}
           </button>
         ))}
       </div>
-      {activeTab === "allocation" && <AllocationChart data={data.assets} />}
-      {activeTab === "performance" && <PerformanceChart data={data.performance} />}
+      {activeTab === 'allocation' && <AllocationChart data={data.allocation} />}
+      {activeTab === 'investments' && <PerformanceChart data={data.investments} />}
     </div>
   );
 }

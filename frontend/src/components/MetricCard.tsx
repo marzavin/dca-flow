@@ -1,4 +1,4 @@
-type MetricType = "money" | "percent" | "text";
+type MetricType = 'money' | 'percent' | 'text';
 
 interface Props {
   title: string;
@@ -15,11 +15,11 @@ function MetricCard({ title, value, level, type }: Props) {
   const formatValue = () => {
     const formatted = formatNumber(value);
 
-    if (type === "percent") {
+    if (type === 'percent') {
       return `${formatted}%`;
     }
 
-    if (type === "money") {
+    if (type === 'money') {
       return `$${formatted}`;
     }
 
@@ -28,16 +28,16 @@ function MetricCard({ title, value, level, type }: Props) {
 
   const getValueClass = () => {
     if (level === undefined) {
-      return "";
+      return '';
     }
 
     if (value > level) {
-      return "positive";
+      return 'positive';
     }
     if (value < level) {
-      return "negative";
+      return 'negative';
     }
-    return "";
+    return '';
   };
 
   return (

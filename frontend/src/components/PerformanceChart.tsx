@@ -1,8 +1,8 @@
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
-import KeyValueModel from "../types/KeyValueModel";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import KeyValueModel from '../types/KeyValueModel';
 
 interface Props {
-  data: KeyValueModel<string, number>[];
+  data: KeyValueModel<Date, number>[];
 }
 
 function PerformanceChart({ data }: Props) {
@@ -15,9 +15,9 @@ function PerformanceChart({ data }: Props) {
           <YAxis dataKey="value" stroke="#94a3b8" />
           <Tooltip
             contentStyle={{
-              background: "#1e293b",
-              border: "1px solid #334155",
-              borderRadius: "8px"
+              background: '#1e293b',
+              border: '1px solid #334155',
+              borderRadius: '8px'
             }}
           />
           <Line

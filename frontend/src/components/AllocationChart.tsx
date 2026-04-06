@@ -1,17 +1,17 @@
-import { PieChart, Pie, Tooltip, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Tooltip, ResponsiveContainer } from 'recharts';
 
-const COLORS = ["#3b82f6", "#22c55e", "#eab308", "#ef4444", "#a855f7", "#14b8a6"];
+const COLORS = ['#3b82f6', '#22c55e', '#eab308', '#ef4444', '#a855f7', '#14b8a6'];
 
-import KeyValueModel from "../types/KeyValueModel";
+import FractionModel from '../types/FractionModel';
 
 interface Props {
-  data: KeyValueModel<string, number>[];
+  data: FractionModel[];
 }
 
 function AllocationChart({ data }: Props) {
-  const total = data.reduce((sum, item) => sum + item.value, 0);
+  const total = data.reduce((sum, item) => sum + item.fraction, 0);
   const chartModel = data.map((item, index) => {
-    return { key: item.key, value: item.value, fill: COLORS[index % COLORS.length] };
+    return { key: item.ticker, value: item.fraction, fill: COLORS[index % COLORS.length] };
   });
 
   return (
