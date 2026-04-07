@@ -22,12 +22,13 @@ public sealed class PortfolioService
 
     public async Task<PortfolioModel> GetPortfolioByIdAsync(int portfolioId, CancellationToken cancellationToken = default)
     {
-        var portfolioDocument = _portfolioRepository.GetPortfolioById(portfolioId) 
+        var portfolioDocument = _portfolioRepository.GetPortfolioById(portfolioId)
             ?? throw new ApplicationException($"Portfolio is not found by id ('{portfolioId}')");
 
         var transactionDocuments = _transactionRepository.GetPortfolioTransactions(portfolioId);
         var transactions = transactionDocuments?.Select(x => new TransactionModel
         {
+            Id = x.Id,
             Timestamp = x.Timestamp,
             Ticker = x.Ticker,
             Type = x.Type,
@@ -48,7 +49,8 @@ public sealed class PortfolioService
             TotalInvested = totalInvested,
             HoldingsValue = holdingsValue,
             TotalReturn = CalculateTotalReturn(totalInvested, holdingsValue),
-            Allocation = CalculateAllocation(assets)
+            Allocation = CalculateAllocation(assets),
+            Transactions = transactions.OrderByDescending(x => x.Timestamp).ToList()
         };
 
         var timelines = await GetTimelinesAsync(transactions, cancellationToken);
@@ -95,7 +97,8 @@ public sealed class PortfolioService
         {
             var transactionsOnDate = transactions.Where(x => DateOnly.FromDateTime(x.Timestamp) == date).ToList();
 
-            totalInvestedValue += transactionsOnDate.Sum(x => x.Cost);
+            totalInvestedValue += transactionsOnDate.Sum(GetImpactOnInvestedValue);
+
             totalInvestedTimeline.Add(new KeyValueModel<DateOnly, double> { Key = date, Value = totalInvestedValue });
 
             var holdingsValueOnDate = new KeyValueModel<DateOnly, double> { Key = date, Value = 0D };
@@ -105,7 +108,7 @@ public sealed class PortfolioService
                 var tickerTransactions = transactionsOnDate.Where(x => x.Ticker == ticker).ToList();
                 if (tickerTransactions.Count != 0)
                 {
-                    valuesByTickers[ticker] += tickerTransactions.Sum(x => x.Type == TransactionType.Buy ? x.Amount : -x.Amount);
+                    valuesByTickers[ticker] += tickerTransactions.Sum(GetImpactOnHoldingsValue);
                 }
 
                 var rate = ratesByTickers[ticker].First(x => x.Key == date).Value;
@@ -136,9 +139,9 @@ public sealed class PortfolioService
     }
 
     private async Task<AssetModel> GetAssetOnDateAsync(
-        DateTime timestamp, 
-        string ticker, 
-        List<TransactionModel> transactions, 
+        DateTime timestamp,
+        string ticker,
+        List<TransactionModel> transactions,
         CancellationToken cancellationToken = default)
     {
         var currentRate = await _databaseRateProvider.GetCurrentExchageRateAsync(ticker, cancellationToken);
@@ -155,17 +158,8 @@ public sealed class PortfolioService
 
         foreach (var transaction in orderedTransactions)
         {
-            if (transaction.Type == TransactionType.Buy)
-            {
-                model.TotalInvested += transaction.Cost;
-                model.TotalHoldings += transaction.Amount;
-            }
-
-            if (transaction.Type == TransactionType.Sell)
-            {
-                model.TotalInvested -= transaction.Cost;
-                model.TotalHoldings -= transaction.Amount;
-            }
+            model.TotalHoldings += GetImpactOnHoldingsValue(transaction);
+            model.TotalInvested += GetImpactOnInvestedValue(transaction);
         }
 
         model.AverageBuyPrice = CalculateAveragePrice(model.TotalInvested, model.TotalHoldings);
@@ -194,6 +188,35 @@ public sealed class PortfolioService
 
     private static double CalculateTotalReturn(double invested, double value)
     {
+        if (invested < double.Epsilon)
+        {
+            return 1D;
+        }
+
         return (value - invested) / invested;
+    }
+
+    private static double GetImpactOnInvestedValue(TransactionModel transaction)
+    {
+        return transaction.Type switch
+        {
+            TransactionType.Buy => transaction.Cost,
+            TransactionType.Sell => -1D * transaction.Cost,
+            TransactionType.TransferIn => 0D,
+            TransactionType.TransferOut => 0D,
+            _ => 0D
+        };
+    }
+
+    private static double GetImpactOnHoldingsValue(TransactionModel transaction)
+    {
+        return transaction.Type switch
+        {
+            TransactionType.Buy => transaction.Amount,
+            TransactionType.Sell => -1D * transaction.Amount,
+            TransactionType.TransferIn => transaction.Amount,
+            TransactionType.TransferOut => -1D * transaction.Amount,
+            _ => 0D
+        };
     }
 }

@@ -13,6 +13,7 @@ function App() {
     name: 'New portfolio',
     allocation: [],
     assets: [],
+    transactions: [],
     holdingsValue: 0,
     totalInvested: 0,
     totalReturn: 0,
@@ -47,6 +48,46 @@ function App() {
         <section className="table-block">
           <div className="block-header">Assets</div>
           <AssetsTable data={portfolio.assets} />
+        </section>
+        <section className="transactions-block">
+          <div className="block-header">Transactions</div>
+          <form className="transaction-form">
+            <input placeholder="Ticker" />
+            <input type="number" placeholder="Amount $" />
+            <input type="number" placeholder="Quantity" />
+            <select>
+              <option value="1">Buy</option>
+              <option value="2">Sell</option>
+              <option value="3">Transfer In</option>
+              <option value="4">Transfer Out</option>
+            </select>
+            <input type="datetime-local" />
+            <button type="submit">Add</button>
+          </form>
+          <table className="transactions-table">
+            <thead>
+              <tr>
+                <th>Ticker</th>
+                <th>Amount</th>
+                <th>Quantity</th>
+                <th>Type</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {portfolio.transactions.map((item) => {
+                return (
+                  <tr key={item.id}>
+                    <td>{item.ticker}</td>
+                    <td>{item.cost}</td>
+                    <td>{item.amount}</td>
+                    <td className="buy">{item.type}</td>
+                    <td>{new Date(item.timestamp).toDateString()}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </section>
       </div>
     </>

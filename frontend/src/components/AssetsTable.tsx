@@ -38,12 +38,12 @@ function AssetsTable({ data }: Props) {
               <tr key={item.ticker}>
                 <td>{item.ticker}</td>
                 <td>{formatUSD(item.averageBuyPrice)}</td>
-                <td>{item.totalInvested}</td>
+                <td>{formatUSD(item.totalInvested)}</td>
                 {item.totalReturn > 0 && <td className="positive">+{(item.totalReturn * 100).toFixed(2)}%</td>}
                 {item.totalReturn < 0 && <td className="negative">{(item.totalReturn * 100).toFixed(2)}%</td>}
                 {item.totalReturn === 0 && <td>0.00%</td>}
                 <td>{item.totalHoldings}</td>
-                <td>{formatUSD(item.totalHoldings * item.averageBuyPrice)}</td>
+                <td>{formatUSD(item.holdingsValue)}</td>
               </tr>
             );
           })}

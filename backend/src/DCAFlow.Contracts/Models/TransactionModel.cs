@@ -4,6 +4,8 @@ namespace DCAFlow.Contracts.Models;
 
 public class TransactionModel
 {
+    public int Id { get; set; }
+
     public DateTime Timestamp { get; set; }
 
     public string Ticker { get; set; }

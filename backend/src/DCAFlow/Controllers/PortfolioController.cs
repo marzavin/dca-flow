@@ -1,4 +1,5 @@
-﻿using DCAFlow.Services;
+﻿using DCAFlow.Contracts.Models;
+using DCAFlow.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DCAFlow.Controllers;
@@ -16,7 +17,13 @@ public class PortfolioController : ControllerBase
     [HttpGet("{portfolioId:int}")]
     public async Task<IActionResult> GetPortfolioAsync(int portfolioId, CancellationToken cancellationToken = default)
     {
-        var model = await _portfolioService.GetPortfolioByIdAsync(portfolioId);
+        var model = await _portfolioService.GetPortfolioByIdAsync(portfolioId, cancellationToken);
         return Ok(model);
+    }
+
+    [HttpPost("{portfolioId:int}/transactions")]
+    public async Task<IActionResult> PostTransaction([FromBody] TransactionModel model, CancellationToken cancellationToken = default)
+    {
+        return NoContent();
     }
 }

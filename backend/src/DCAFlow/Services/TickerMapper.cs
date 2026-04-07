@@ -9,6 +9,8 @@ public static class TickerMapper
             case "BTC": return "bitcoin";
             case "ETH": return "ethereum";
             case "SOL": return "solana";
+            case "BAT": return "basic-attention-token";
+            case "RAY": return "raydium";
             default:
                 break;
         }
@@ -23,6 +25,8 @@ public static class TickerMapper
             case "bitcoin": return "BTC";
             case "ethereum": return "ETH";
             case "solana": return "SOL";
+            case "basic-attention-token": return "BAT";
+            case "raydium": return "RAY";
             default:
                 break;
         }

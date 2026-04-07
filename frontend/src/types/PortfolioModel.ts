@@ -1,6 +1,7 @@
 import AssetModel from './AssetModel';
 import FractionModel from './FractionModel';
 import KeyValueModel from './KeyValueModel';
+import TransactionModel from './TransactionModel';
 
 interface PortfolioModel {
   id: number;
@@ -10,6 +11,7 @@ interface PortfolioModel {
   totalReturn: number;
   assets: AssetModel[];
   allocation: FractionModel[];
+  transactions: TransactionModel[];
   totalInvestedTimeline: KeyValueModel<Date, number>[];
   holdingsValueTimeline: KeyValueModel<Date, number>[];
 }
