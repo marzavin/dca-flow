@@ -1,9 +1,12 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
+import DataProvider from './services/DataProvider.tsx';
 
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <DataProvider>
+      <App />
+    </DataProvider>
   </StrictMode>
 );

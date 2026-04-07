@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<LangVersion>latestmajor</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="LiteDB" Version="5.0.21" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\DCAFlow.Contracts\DCAFlow.Contracts.csproj" />
+	</ItemGroup>
+
+</Project>

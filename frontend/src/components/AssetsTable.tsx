@@ -1,4 +1,4 @@
-import AssetModel from "../types/AssetModel";
+import AssetModel from '../types/AssetModel';
 
 interface Props {
   data: AssetModel[];
@@ -8,7 +8,7 @@ function AssetsTable({ data }: Props) {
   const formatUSD = (amount: number): string => {
     const integerPart = Math.floor(amount);
     const decimalPart = Math.round((amount - integerPart) * 100);
-    const withCommas = integerPart.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    const withCommas = integerPart.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
     if (decimalPart === 0) {
       return `$${withCommas}`;
@@ -24,9 +24,10 @@ function AssetsTable({ data }: Props) {
       <table>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>24h</th>
+            <th>Ticker</th>
+            <th>Average Buy Price</th>
+            <th>Total Invested</th>
+            <th>ROI</th>
             <th>Holdings</th>
             <th>Value</th>
           </tr>
@@ -34,16 +35,15 @@ function AssetsTable({ data }: Props) {
         <tbody>
           {data.map((item) => {
             return (
-              <tr key={item.key}>
-                <td>{item.key}</td>
-                <td>{formatUSD(item.averagePrice)}</td>
-                {item.dailyPerformance > 0 && (
-                  <td className="positive">+{(item.dailyPerformance * 100).toFixed(2)}%</td>
-                )}
-                {item.dailyPerformance < 0 && <td className="negative">{(item.dailyPerformance * 100).toFixed(2)}%</td>}
-                {item.dailyPerformance === 0 && <td>0.00%</td>}
-                <td>{item.holdings}</td>
-                <td>{formatUSD(item.value)}</td>
+              <tr key={item.ticker}>
+                <td>{item.ticker}</td>
+                <td>{formatUSD(item.averageBuyPrice)}</td>
+                <td>{formatUSD(item.totalInvested)}</td>
+                {item.totalReturn > 0 && <td className="positive">+{(item.totalReturn * 100).toFixed(2)}%</td>}
+                {item.totalReturn < 0 && <td className="negative">{(item.totalReturn * 100).toFixed(2)}%</td>}
+                {item.totalReturn === 0 && <td>0.00%</td>}
+                <td>{item.totalHoldings}</td>
+                <td>{formatUSD(item.holdingsValue)}</td>
               </tr>
             );
           })}

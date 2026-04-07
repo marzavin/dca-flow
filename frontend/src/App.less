@@ -1,4 +1,4 @@
-@import "Colors.less";
+@import 'Colors.less';
 
 body {
   margin: 0;
@@ -173,4 +173,69 @@ table {
 
 .negative {
   color: var(--chart-red-color);
+}
+
+.transactions-block {
+  background: var(--bg-secondary-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 24px;
+
+  .transaction-form {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr) auto;
+    gap: 10px;
+    margin-bottom: 16px;
+
+    input,
+    select {
+      background: var(--bg-primary-color);
+      border: 1px solid var(--border-color);
+      color: var(--txt-primary-color);
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    button {
+      background: #3b82f6;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+
+  .transactions-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+      text-align: left;
+      font-size: 12px;
+      color: var(--txt-secondary-color);
+      padding-bottom: 8px;
+    }
+
+    td {
+      padding: 10px 0;
+      border-top: 1px solid var(--border-color);
+    }
+  }
+
+  .buy {
+    color: var(--chart-green-color);
+  }
+
+  .sell {
+    color: var(--chart-red-color);
+  }
+
+  .transfer {
+    color: var(--txt-secondary-color);
+  }
 }
