@@ -1,39 +1,93 @@
-@import 'Colors.less';
+:root {
+  --bg-primary-color: #0f172a;
+  --bg-secondary-color: #1e293b;
+  --border-color: #334155;
+  --border-color-rgb: 51, 65, 85;
+  --txt-primary-color: #e2e8f0;
+  --txt-secondary-color: #94a3b8;
+
+  --chart-blue-color: #3b82f6;
+  --chart-green-color: #22c55e;
+  --chart-yellow-color: #eab308;
+  --chart-red-color: #ef4444;
+  --chart-purple-color: #a855f7;
+  --chart-teal-color: #14b8a6;
+}
 
 body {
   margin: 0;
   padding: 0;
-}
 
-.dashboard {
-  padding: 24px;
-  background: var(--bg-primary-color);
-  color: var(--txt-primary-color);
-  min-height: 100vh;
-  font-family: Inter, sans-serif;
-}
+  .positive {
+    color: var(--chart-green-color);
+  }
 
-.header {
-  margin-bottom: 24px;
+  .negative {
+    color: var(--chart-red-color);
+  }
 
-  h1 {
-    font-size: 24px;
-    font-weight: 600;
+  .dashboard {
+    padding: 24px;
+    background: var(--bg-primary-color);
+    color: var(--txt-primary-color);
+    min-height: 100vh;
+    font-family: Inter, sans-serif;
+
+    .header {
+      margin-bottom: 24px;
+
+      h1 {
+        font-size: 24px;
+        font-weight: 600;
+      }
+    }
+
+    .block {
+      margin-bottom: 24px;
+
+      .block-header {
+        font-size: 16px;
+        margin-bottom: 12px;
+        color: var(--txt-secondary-color);
+      }
+    }
+
+    .panel {
+      background: var(--bg-secondary-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .table table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+
+      th {
+        text-align: left;
+        font-size: 12px;
+        color: var(--txt-secondary-color);
+        padding-bottom: 8px;
+      }
+
+      td {
+        padding: 12px 0;
+        border-top: 1px solid var(--border-color);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
   }
 }
 
-.metrics {
+.metrics-block {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
-  margin-bottom: 24px;
 
   .metric-card {
-    background: var(--bg-secondary-color);
-    padding: 16px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-
     .metric-title {
       font-size: 14px;
       color: var(--txt-secondary-color);
@@ -43,25 +97,11 @@ body {
     .metric-value {
       font-size: 24px;
       font-weight: 600;
-
-      &.positive {
-        color: var(--chart-green-color);
-      }
-
-      &.negative {
-        color: var(--chart-red-color);
-      }
     }
   }
 }
 
-.chart-block {
-  background: var(--bg-secondary-color);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 24px;
-
+.charts-block {
   .chart-tabs {
     display: flex;
     gap: 8px;
@@ -90,6 +130,11 @@ body {
   .chart-container {
     width: 100%;
     height: 300px;
+
+    .recharts-wrapper *:focus,
+    .recharts-wrapper *:focus-visible {
+      outline: none !important;
+    }
 
     &.pie-wrapper {
       display: flex;
@@ -131,57 +176,7 @@ body {
   }
 }
 
-.block-header {
-  font-size: 16px;
-  margin-bottom: 12px;
-  color: var(--txt-secondary-color);
-}
-
-.chart-placeholder {
-  height: 300px;
-  border-radius: 8px;
-  background: var(--border-color);
-}
-
-.table-block {
-  background: var(--bg-secondary-color);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 16px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-
-  th {
-    text-align: left;
-    font-size: 12px;
-    color: var(--txt-secondary-color);
-    padding-bottom: 8px;
-  }
-
-  td {
-    padding: 12px 0;
-    border-top: 1px solid var(--border-color);
-  }
-}
-
-.positive {
-  color: var(--chart-green-color);
-}
-
-.negative {
-  color: var(--chart-red-color);
-}
-
 .transactions-block {
-  background: var(--bg-secondary-color);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 16px;
-  margin-top: 24px;
-
   .transaction-form {
     display: grid;
     grid-template-columns: repeat(5, 1fr) auto;
@@ -208,34 +203,5 @@ table {
         opacity: 0.9;
       }
     }
-  }
-
-  .transactions-table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th {
-      text-align: left;
-      font-size: 12px;
-      color: var(--txt-secondary-color);
-      padding-bottom: 8px;
-    }
-
-    td {
-      padding: 10px 0;
-      border-top: 1px solid var(--border-color);
-    }
-  }
-
-  .buy {
-    color: var(--chart-green-color);
-  }
-
-  .sell {
-    color: var(--chart-red-color);
-  }
-
-  .transfer {
-    color: var(--txt-secondary-color);
   }
 }

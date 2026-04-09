@@ -1,4 +1,4 @@
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
 import KeyValueModel from '../types/KeyValueModel';
 
 interface Props {
@@ -27,11 +27,12 @@ function PerformanceChart({ totalInvestedTimeline, holdingsValueTimeline }: Prop
               borderRadius: '8px'
             }}
           />
+          <Legend />
           <Line
             type="monotone"
             dataKey="holdingsValue"
             stroke="#22c55e"
-            strokeWidth={2}
+            strokeWidth={1}
             dot={false}
             isAnimationActive={false}
           />
@@ -39,7 +40,7 @@ function PerformanceChart({ totalInvestedTimeline, holdingsValueTimeline }: Prop
             type="monotone"
             dataKey="totalInvested"
             stroke="#ef4444"
-            strokeWidth={2}
+            strokeWidth={1}
             dot={false}
             isAnimationActive={false}
           />
