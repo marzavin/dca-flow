@@ -8,18 +8,11 @@ interface Props {
 }
 
 function TransactionsTable({ data }: Props) {
-  const TypeLabels: Record<TransactionType, string> = {
-    [TransactionType.Buy]: 'Buy',
-    [TransactionType.Sell]: 'Sell',
-    [TransactionType.TransferIn]: 'Deposit',
-    [TransactionType.TransferOut]: 'Withdraw'
-  };
-
-  const TypeColorClass: Record<TransactionType, string> = {
-    [TransactionType.Buy]: 'positive',
-    [TransactionType.Sell]: 'negative',
-    [TransactionType.TransferIn]: 'positive',
-    [TransactionType.TransferOut]: 'negative'
+  const TransactionTypeMeta = {
+    [TransactionType.Buy]: { label: 'Buy', className: 'positive' },
+    [TransactionType.Sell]: { label: 'Sell', className: 'negative' },
+    [TransactionType.TransferIn]: { label: 'Deposit', className: 'positive' },
+    [TransactionType.TransferOut]: { label: 'Withdraw', className: 'negative' }
   };
 
   return (
@@ -41,7 +34,7 @@ function TransactionsTable({ data }: Props) {
                 <td>{item.ticker}</td>
                 <td>{formatMoneyFull(item.cost)}</td>
                 <td>{item.amount}</td>
-                <td className={TypeColorClass[item.type]}>{TypeLabels[item.type]}</td>
+                <td className={TransactionTypeMeta[item.type].className}>{TransactionTypeMeta[item.type].label}</td>
                 <td>{formatDateTime(new Date(item.timestamp))}</td>
               </tr>
             );
