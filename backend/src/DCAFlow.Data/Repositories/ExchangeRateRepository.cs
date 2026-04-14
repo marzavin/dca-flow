@@ -12,18 +12,18 @@ public class ExchangeRateRepository
         _database = database ?? throw new ArgumentNullException(nameof(database));
     }
 
-    public ExchangeRateDocument GetRateOnDate(string ticker, int dayNumber)
+    public ExchangeRateDocument GetRateOnDate(string ticker, DateOnly timestamp)
     {
         var collection = _database.GetCollection<ExchangeRateDocument>("rates");
 
-        return collection.Find(x => x.Ticker == ticker && x.DayNumber == dayNumber).FirstOrDefault();
+        return collection.Find(x => x.Ticker == ticker && x.Timestamp == timestamp).FirstOrDefault();
     }
 
-    public List<ExchangeRateDocument> GetHistoricalDailyRates(string ticker, int fromDayNumber, int toDayNumber)
+    public List<ExchangeRateDocument> GetHistoricalDailyRates(string ticker, DateOnly from, DateOnly to)
     {
         var collection = _database.GetCollection<ExchangeRateDocument>("rates");
 
-        return [.. collection.Find(x => x.Ticker == ticker && x.DayNumber >= fromDayNumber && x.DayNumber <= toDayNumber)];
+        return [.. collection.Find(x => x.Ticker == ticker && x.Timestamp >= from && x.Timestamp <= to)];
     }
 
     public void InsertRates(List<ExchangeRateDocument> exchangeRates)

@@ -30,10 +30,17 @@ public sealed class PortfolioService
             Timestamp = transaction.Timestamp.ToUniversalTime(),
             Amount = transaction.Amount,
             Cost = transaction.Cost,
-            Type = transaction.Type
+            Type = (int)transaction.Type
         };
 
         _transactionRepository.Insert(document);
+
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteTransactionAsync(int transactionId)
+    {
+        _transactionRepository.Delete(transactionId);
 
         return Task.CompletedTask;
     }
@@ -49,7 +56,7 @@ public sealed class PortfolioService
             Id = x.Id,
             Timestamp = x.Timestamp,
             Ticker = x.Ticker,
-            Type = x.Type,
+            Type = (TransactionType)x.Type,
             Amount = x.Amount,
             Cost = x.Cost
         }).ToList() ?? [];
@@ -111,7 +118,7 @@ public sealed class PortfolioService
         var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
         var date = startDate;
 
-        while (date < currentDate)
+        while (date <= currentDate)
         {
             var transactionsOnDate = transactions.Where(x => DateOnly.FromDateTime(x.Timestamp) == date).ToList();
 

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DCAFlow.Controllers;
 
+[ApiController]
 [Route("api/portfolios")]
 public class PortfolioController : ControllerBase
 {
@@ -26,9 +27,12 @@ public class PortfolioController : ControllerBase
         return Ok(model);
     }
 
+    //TODO: Move to TransactionController
     [HttpPost("{portfolioId:int}/transactions")]
-    public async Task<IActionResult> PostTransaction([FromBody] TransactionModel model, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> AddTransaction([FromRoute] int portfolioId, [FromBody] TransactionModel model, CancellationToken cancellationToken = default)
     {
+        model.PortfolioId = portfolioId;
+
         var validator = new TransactionModelValidator(_coinService.GetSupportedCoins());
         var validationResult = await validator.ValidateAsync(model, cancellationToken);
         if (!validationResult.IsValid)
@@ -40,6 +44,15 @@ public class PortfolioController : ControllerBase
         }
 
         await _portfolioService.AddTransactionAsync(model);
+
+        return NoContent();
+    }
+
+    [HttpDelete("{portfolioId:int}/transactions/{transactionId}")]
+    public async Task<IActionResult> DeleteTransaction([FromRoute] int portfolioId, [FromRoute] int transactionId, CancellationToken cancellationToken = default)
+    {
+        //TODO: Validate portfolio id
+        await _portfolioService.DeleteTransactionAsync(transactionId);
 
         return NoContent();
     }
