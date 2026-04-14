@@ -1,7 +1,9 @@
 using DCAFlow.Contracts.Documents;
+using DCAFlow.Contracts.Models;
 using DCAFlow.Data.Repositories;
 using DCAFlow.Web.Services;
 using DCAFlow.Web.Settings;
+using DCAFlow.Web.Validators;
 using LiteDB;
 using System.Reflection;
 
@@ -48,6 +50,7 @@ builder.Services.AddScoped<ExchangeRateRepository>();
 builder.Services.AddScoped<CoinGeckoRateProvider>();
 builder.Services.AddScoped<ExchangeRateProvider>();
 builder.Services.AddScoped<PortfolioService>();
+builder.Services.AddScoped<CoinService>();
 
 builder.Services.AddControllers();
 
