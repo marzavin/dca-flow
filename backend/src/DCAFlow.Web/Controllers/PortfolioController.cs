@@ -1,5 +1,7 @@
 ﻿using DCAFlow.Contracts.Models;
-using DCAFlow.Services;
+using DCAFlow.Web.Models;
+using DCAFlow.Web.Services;
+using DCAFlow.Web.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DCAFlow.Controllers;
@@ -9,9 +11,12 @@ public class PortfolioController : ControllerBase
 {
     private readonly PortfolioService _portfolioService;
 
-    public PortfolioController(PortfolioService portfolioService)
+    private readonly CoinService _coinService;
+
+    public PortfolioController(PortfolioService portfolioService, CoinService coinService)
     {
         _portfolioService = portfolioService ?? throw new ArgumentNullException(nameof(portfolioService));
+        _coinService = coinService ?? throw new ArgumentNullException(nameof(coinService));
     }
 
     [HttpGet("{portfolioId:int}")]
@@ -24,6 +29,18 @@ public class PortfolioController : ControllerBase
     [HttpPost("{portfolioId:int}/transactions")]
     public async Task<IActionResult> PostTransaction([FromBody] TransactionModel model, CancellationToken cancellationToken = default)
     {
+        var validator = new TransactionModelValidator(_coinService.GetSupportedCoins());
+        var validationResult = await validator.ValidateAsync(model, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(new BadRequestModel 
+            { 
+                Errors = validationResult.Errors?.Select(x => new ErrorModel { Key = x.PropertyName, Message = x.ErrorMessage }).ToList()
+            });
+        }
+
+        await _portfolioService.AddTransactionAsync(model);
+
         return NoContent();
     }
 }

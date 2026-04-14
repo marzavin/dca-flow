@@ -1,5 +1,5 @@
 <Solution>
   <Project Path="src/DCAFlow.Contracts/DCAFlow.Contracts.csproj" Id="45525734-9bb8-4f8e-852c-ec3bf6b6626b" />
   <Project Path="src/DCAFlow.Data/DCAFlow.Data.csproj" Id="e5a1b86d-299c-4af6-b825-8d32fd7323fa" />
-  <Project Path="src/DCAFlow/DCAFlow.csproj" Id="e701d8a9-1b04-4e4e-a293-95636b67ffb6" />
+  <Project Path="src/DCAFlow.Web/DCAFlow.Web.csproj" Id="e701d8a9-1b04-4e4e-a293-95636b67ffb6" />
 </Solution>

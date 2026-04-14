@@ -1,3 +1,5 @@
+import { formatMoneyFull } from '../helpers/MoneyFormatter';
+
 type MetricType = 'money' | 'percent' | 'text';
 
 interface Props {
@@ -20,7 +22,7 @@ function MetricCard({ title, value, level, type }: Props) {
     }
 
     if (type === 'money') {
-      return `$${formatted}`;
+      return formatMoneyFull(value);
     }
 
     return formatted;
@@ -41,7 +43,7 @@ function MetricCard({ title, value, level, type }: Props) {
   };
 
   return (
-    <div className="metric-card">
+    <div className="metric-card panel">
       <div className="metric-title">{title}</div>
       <div className={`metric-value ${getValueClass()}`}>{formatValue()}</div>
     </div>

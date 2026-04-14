@@ -19,7 +19,14 @@ function AllocationChart({ data }: Props) {
       <div className="pie-chart">
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
-            <Pie data={chartModel} dataKey="value" nameKey="key" outerRadius={100} isAnimationActive={false} />
+            <Pie
+              data={chartModel}
+              dataKey="value"
+              nameKey="key"
+              outerRadius={140}
+              innerRadius={70}
+              isAnimationActive={false}
+            />
             <Tooltip />
           </PieChart>
         </ResponsiveContainer>

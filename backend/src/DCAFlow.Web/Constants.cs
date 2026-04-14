@@ -1,4 +1,4 @@
-﻿namespace DCAFlow;
+﻿namespace DCAFlow.Web;
 
 internal static class Constants
 {

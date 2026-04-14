@@ -5,6 +5,7 @@ import ChartTabs from './components/ChartTabs';
 import MetricCard from './components/MetricCard';
 import { useData } from './services/useData';
 import PortfolioModel from './types/PortfolioModel';
+import TransactionsTable from './components/TransactionsTable';
 
 function App() {
   const dataProvider = useData();
@@ -33,7 +34,7 @@ function App() {
         <header className="header">
           <h1>Portfolio: {portfolio?.name}</h1>
         </header>
-        <section className="metrics">
+        <section className="metrics-block block">
           <MetricCard title="Total Invested" value={portfolio.totalInvested} type="money" />
           <MetricCard
             title="Holdings Value"
@@ -44,12 +45,16 @@ function App() {
           <MetricCard title="ROI" value={portfolio.totalReturn * 100} type="percent" level={0} />
           <MetricCard title="Assets" value={portfolio.assets.length} type="text" />
         </section>
-        <ChartTabs data={portfolio} />
-        <section className="table-block">
-          <div className="block-header">Assets</div>
-          <AssetsTable data={portfolio.assets} />
+        <section className="charts-block block panel">
+          <ChartTabs data={portfolio} />
         </section>
-        <section className="transactions-block">
+        <section className="assets-block block panel">
+          <div className="block-header">Assets</div>
+          <div className="assets-table table">
+            <AssetsTable data={portfolio.assets} />
+          </div>
+        </section>
+        <section className="transactions-block block panel">
           <div className="block-header">Transactions</div>
           <form className="transaction-form">
             <input placeholder="Ticker" />
@@ -64,30 +69,9 @@ function App() {
             <input type="datetime-local" />
             <button type="submit">Add</button>
           </form>
-          <table className="transactions-table">
-            <thead>
-              <tr>
-                <th>Ticker</th>
-                <th>Amount</th>
-                <th>Quantity</th>
-                <th>Type</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {portfolio.transactions.map((item) => {
-                return (
-                  <tr key={item.id}>
-                    <td>{item.ticker}</td>
-                    <td>{item.cost}</td>
-                    <td>{item.amount}</td>
-                    <td className="buy">{item.type}</td>
-                    <td>{new Date(item.timestamp).toDateString()}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <div className="transactions-table table">
+            <TransactionsTable data={portfolio.transactions} />
+          </div>
         </section>
       </div>
     </>

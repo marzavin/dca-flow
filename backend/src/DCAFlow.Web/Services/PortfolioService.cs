@@ -1,8 +1,9 @@
-﻿using DCAFlow.Contracts.Enums;
+﻿using DCAFlow.Contracts.Documents;
+using DCAFlow.Contracts.Enums;
 using DCAFlow.Contracts.Models;
 using DCAFlow.Data.Repositories;
 
-namespace DCAFlow.Services;
+namespace DCAFlow.Web.Services;
 
 public sealed class PortfolioService
 {
@@ -18,6 +19,23 @@ public sealed class PortfolioService
         _portfolioRepository = portfolioRepository ?? throw new ArgumentNullException(nameof(portfolioRepository));
         _transactionRepository = transactionRepository ?? throw new ArgumentNullException(nameof(transactionRepository));
         _databaseRateProvider = databaseRateProvider ?? throw new ArgumentNullException(nameof(databaseRateProvider));
+    }
+
+    public Task AddTransactionAsync(TransactionModel transaction)
+    {
+        var document = new TransactionDocument
+        {
+            PortfolioId = transaction.PortfolioId,
+            Ticker = transaction.Ticker,
+            Timestamp = transaction.Timestamp.ToUniversalTime(),
+            Amount = transaction.Amount,
+            Cost = transaction.Cost,
+            Type = transaction.Type
+        };
+
+        _transactionRepository.Insert(document);
+
+        return Task.CompletedTask;
     }
 
     public async Task<PortfolioModel> GetPortfolioByIdAsync(int portfolioId, CancellationToken cancellationToken = default)
@@ -81,7 +99,7 @@ public sealed class PortfolioService
         {
             valuesByTickers.Add(ticker, 0D);
 
-            var rates = await _databaseRateProvider.GetHistoricalRatesAsync(ticker, startDate, DateOnly.FromDateTime(DateTime.UtcNow), cancellationToken);
+            var rates = await _databaseRateProvider.GetExchangeRatesFromDateAsync(ticker, startDate, cancellationToken);
             ratesByTickers.Add(ticker, rates);
         }
 
@@ -200,8 +218,8 @@ public sealed class PortfolioService
     {
         return transaction.Type switch
         {
-            TransactionType.Buy => transaction.Cost,
-            TransactionType.Sell => -1D * transaction.Cost,
+            TransactionType.Buy => transaction.Cost.Value,
+            TransactionType.Sell => -1D * transaction.Cost.Value,
             TransactionType.TransferIn => 0D,
             TransactionType.TransferOut => 0D,
             _ => 0D

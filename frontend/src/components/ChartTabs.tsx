@@ -18,7 +18,7 @@ function ChartTabs({ data }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>('allocation');
 
   return (
-    <div className="chart-block">
+    <>
       <div className="chart-tabs">
         {tabs.map((tab) => (
           <button
@@ -37,7 +37,7 @@ function ChartTabs({ data }: Props) {
           holdingsValueTimeline={data.holdingsValueTimeline}
         />
       )}
-    </div>
+    </>
   );
 }
 

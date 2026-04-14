@@ -1,24 +1,29 @@
 ﻿using DCAFlow.Contracts.Models;
-using DCAFlow.Settings;
+using DCAFlow.Web.Settings;
 using System.Text.Json;
-using static DCAFlow.Constants;
+using static DCAFlow.Web.Constants;
 
-namespace DCAFlow.Services;
+namespace DCAFlow.Web.Services;
 
 public class CoinGeckoRateProvider
 {
     private readonly CoinGeckoSettings _settings;
+
+    private readonly List<CoinModel> _supportedCoins;
+
     private readonly IHttpClientFactory _clientFactory;
 
-    public CoinGeckoRateProvider(IHttpClientFactory clientFactory, CoinGeckoSettings settings)
+    public CoinGeckoRateProvider(IHttpClientFactory clientFactory, CoinService coinService, CoinGeckoSettings settings)
     {
-        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+
+        _supportedCoins = coinService.GetSupportedCoins();
     }
 
     public async Task<KeyValueModel<DateOnly, double>> GetCurrentExchageRateAsync(string ticker, CancellationToken cancellationToken = default)
     {
-        var coinId = TickerMapper.GetIdentifierByTicker(ticker);
+        var coinId = _supportedCoins.First(x => x.Ticker == ticker).CoinGeckoId;
         
         var url = $"{_settings.BaseUrl}/simple/price?vs_currencies=usd&ids={coinId}&x_cg_demo_api_key={_settings.Key}";
 
@@ -40,8 +45,8 @@ public class CoinGeckoRateProvider
     public async Task<KeyValueModel<DateOnly, double>> GetExchangeRateOnDateAsync(string ticker, DateOnly ts, CancellationToken cancellationToken = default)
     {
         var formattedDate = ts.ToString("dd-MM-yyyy");
-        var coinId = TickerMapper.GetIdentifierByTicker(ticker);
-        
+        var coinId = _supportedCoins.First(x => x.Ticker == ticker).CoinGeckoId;
+
         var url = $"{_settings.BaseUrl}/coins/{coinId}/history?date={formattedDate}&x_cg_demo_api_key={_settings.Key}";
 
         var client = _clientFactory.CreateClient(HttpClients.CoinGeckoClient);
@@ -66,7 +71,7 @@ public class CoinGeckoRateProvider
         var fromUnix = new DateTimeOffset(fromInclusive, new TimeOnly(0, 0, 0), TimeSpan.Zero).ToUnixTimeSeconds();
         var toUnix = new DateTimeOffset(toExclusive, new TimeOnly(0, 0, 0), TimeSpan.Zero).ToUnixTimeSeconds();
 
-        var coinId = TickerMapper.GetIdentifierByTicker(ticker);
+        var coinId = _supportedCoins.First(x => x.Ticker == ticker).CoinGeckoId;
 
         var url = $"{_settings.BaseUrl}/coins/{coinId}/market_chart/range?vs_currency=usd&from={fromUnix}&to={toUnix}&x_cg_demo_api_key={_settings.Key}";
 

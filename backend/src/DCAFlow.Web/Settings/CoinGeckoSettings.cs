@@ -1,4 +1,4 @@
-﻿namespace DCAFlow.Settings;
+﻿namespace DCAFlow.Web.Settings;
 
 public class CoinGeckoSettings
 {

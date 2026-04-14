@@ -2,7 +2,7 @@
 
 public class ExchangeRateDocument : DocumentBase
 {
-    public DateOnly Timestamp { get; set; }
+    public int DayNumber { get; set; }
 
     public string Ticker { get; set; }
 
