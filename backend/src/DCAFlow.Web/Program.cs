@@ -1,7 +1,7 @@
 using DCAFlow.Contracts.Documents;
 using DCAFlow.Data.Repositories;
-using DCAFlow.Services;
-using DCAFlow.Settings;
+using DCAFlow.Web.Services;
+using DCAFlow.Web.Settings;
 using LiteDB;
 using System.Reflection;
 
@@ -37,7 +37,7 @@ builder.Services.AddMemoryCache();
 var coinGeckoSetting = builder.Configuration.GetSection("CoinGecko").Get<CoinGeckoSettings>();
 builder.Services.AddSingleton(coinGeckoSetting);
 
-builder.Services.AddHttpClient(DCAFlow.Constants.HttpClients.CoinGeckoClient, (_, client) =>
+builder.Services.AddHttpClient(DCAFlow.Web.Constants.HttpClients.CoinGeckoClient, (_, client) =>
 {
     client.BaseAddress = new Uri(coinGeckoSetting.BaseUrl);
 });

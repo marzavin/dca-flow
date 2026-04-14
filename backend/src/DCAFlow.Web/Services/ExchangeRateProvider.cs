@@ -3,7 +3,7 @@ using DCAFlow.Contracts.Models;
 using DCAFlow.Data.Repositories;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace DCAFlow.Services;
+namespace DCAFlow.Web.Services;
 
 public class ExchangeRateProvider : IExchangeRateProvider
 {

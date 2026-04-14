@@ -1,9 +1,9 @@
 ﻿using DCAFlow.Contracts.Models;
-using DCAFlow.Settings;
+using DCAFlow.Web.Settings;
 using System.Text.Json;
-using static DCAFlow.Constants;
+using static DCAFlow.Web.Constants;
 
-namespace DCAFlow.Services;
+namespace DCAFlow.Web.Services;
 
 public class CoinGeckoRateProvider
 {

@@ -2,7 +2,7 @@
 using DCAFlow.Contracts.Models;
 using DCAFlow.Data.Repositories;
 
-namespace DCAFlow.Services;
+namespace DCAFlow.Web.Services;
 
 public sealed class PortfolioService
 {

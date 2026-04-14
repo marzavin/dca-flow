@@ -1,4 +1,4 @@
-﻿namespace DCAFlow.Services;
+﻿namespace DCAFlow.Web.Services;
 
 public static class TickerMapper
 {
