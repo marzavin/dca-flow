@@ -7,6 +7,7 @@ interface TransactionModel {
   type: TransactionType;
   cost: number;
   amount: number;
+  portfolioId: number;
 }
 
 export default TransactionModel;

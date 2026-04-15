@@ -21,8 +21,8 @@ function TransactionsTable({ data }: Props) {
         <thead>
           <tr>
             <th>Ticker</th>
+            <th>Cost</th>
             <th>Amount</th>
-            <th>Quantity</th>
             <th>Type</th>
             <th>Date</th>
           </tr>

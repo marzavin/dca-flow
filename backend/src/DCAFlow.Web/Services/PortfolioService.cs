@@ -21,7 +21,7 @@ public sealed class PortfolioService
         _databaseRateProvider = databaseRateProvider ?? throw new ArgumentNullException(nameof(databaseRateProvider));
     }
 
-    public Task AddTransactionAsync(TransactionModel transaction)
+    public Task AddTransactionAsync(TransactionModel transaction, CancellationToken cancellationToken = default)
     {
         var document = new TransactionDocument
         {
@@ -38,7 +38,7 @@ public sealed class PortfolioService
         return Task.CompletedTask;
     }
 
-    public Task DeleteTransactionAsync(int transactionId)
+    public Task DeleteTransactionAsync(int transactionId, CancellationToken cancellationToken = default)
     {
         _transactionRepository.Delete(transactionId);
 
