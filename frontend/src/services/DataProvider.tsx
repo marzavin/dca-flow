@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
+
 import { DataContext, IDataProvider } from './DataContext';
-import PortfolioModel from '../types/PortfolioModel';
 import CoinModel from '../types/CoinModel';
-import TransactionModel from '../types/TransactionModel';
 import KeyValueModel from '../types/KeyValueModel';
+import PortfolioModel from '../types/PortfolioModel';
+import TransactionModel from '../types/TransactionModel';
 
 const createDataProvider = (): IDataProvider => {
   //const baseUrl = window.location.origin;

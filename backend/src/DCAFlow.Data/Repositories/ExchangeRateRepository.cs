@@ -29,11 +29,6 @@ public class ExchangeRateRepository
     public void InsertRates(List<ExchangeRateDocument> exchangeRates)
     {
         var collection = _database.GetCollection<ExchangeRateDocument>("rates");
-
-        foreach (var rate in exchangeRates)
-        {
-            rate.Id = rate.Timestamp.DayNumber;
-            collection.Upsert(rate);
-        }
+        collection.Insert(exchangeRates);
     }
 }

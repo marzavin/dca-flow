@@ -1,8 +1,9 @@
 import { createContext } from 'react';
-import PortfolioModel from '../types/PortfolioModel';
+
 import CoinModel from '../types/CoinModel';
-import TransactionModel from '../types/TransactionModel';
 import KeyValueModel from '../types/KeyValueModel';
+import PortfolioModel from '../types/PortfolioModel';
+import TransactionModel from '../types/TransactionModel';
 
 export interface IDataProvider {
   getPortfolio(id: number): Promise<PortfolioModel | null>;

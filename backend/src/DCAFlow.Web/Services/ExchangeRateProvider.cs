@@ -35,11 +35,6 @@ public class ExchangeRateProvider : IExchangeRateProvider
         return thirdPartyProviderResult;
     }
 
-    public Task<KeyValueModel<DateOnly, double>> GetExchangeRateOnDateAsync(string ticker, DateOnly ts, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<List<KeyValueModel<DateOnly, double>>> GetExchangeRatesFromDateAsync(string ticker, DateOnly from, CancellationToken cancellationToken = default)
     {
         var todayRate = await _coinGeckoProvider.GetCurrentExchageRateAsync(ticker, cancellationToken);
@@ -84,14 +79,6 @@ public class ExchangeRateProvider : IExchangeRateProvider
         return rates
             .GroupBy(x => new DateOnly(x.Key.Year, x.Key.Month, x.Key.Day))
             .Select(x => new KeyValueModel<DateOnly, double> { Key = x.Key, Value = x.OrderBy(x => x.Key).Last().Value })
-            .ToList();
-    }
-
-    private List<KeyValueModel<DateOnly, double>> GetAverageDailyRates(List<KeyValueModel<DateTime, double>> rates)
-    {
-        return rates
-            .GroupBy(x => new DateOnly(x.Key.Year, x.Key.Month, x.Key.Day))
-            .Select(x => new KeyValueModel<DateOnly, double> { Key = x.Key, Value = x.OrderBy(x => x.Key).Sum(x => x.Value) / x.Count() })
             .ToList();
     }
 }

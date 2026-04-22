@@ -1,6 +1,6 @@
-import TransactionModel from '../types/TransactionModel';
 import { formatDateTime } from '../helpers/DateFormatter';
 import { formatMoneyFull } from '../helpers/MoneyFormatter';
+import TransactionModel from '../types/TransactionModel';
 import TransactionType from '../types/TransactionType';
 
 interface Props {

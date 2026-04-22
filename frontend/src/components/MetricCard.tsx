@@ -1,50 +1,44 @@
 import { formatMoneyFull } from '../helpers/MoneyFormatter';
-
-type MetricType = 'money' | 'percent' | 'text';
+import MetricModel from '../types/MetricModel';
+import MetricType from '../types/MetricType';
+import RangeType from '../types/RangeType';
 
 interface Props {
-  title: string;
-  value: number;
-  level?: number;
-  type: MetricType;
+  data: MetricModel;
 }
 
-function MetricCard({ title, value, level, type }: Props) {
+function MetricCard({ data }: Props) {
   const formatNumber = (num: number) => {
     return Number(num.toFixed(2)).toLocaleString();
   };
 
   const formatValue = () => {
-    const formatted = formatNumber(value);
+    const formatted = formatNumber(data.value);
 
-    if (type === 'percent') {
+    if (data.metricType === MetricType.Percent) {
       return `${formatted}%`;
     }
 
-    if (type === 'money') {
-      return formatMoneyFull(value);
+    if (data.metricType === MetricType.Money) {
+      return formatMoneyFull(data.value);
     }
 
     return formatted;
   };
 
   const getValueClass = () => {
-    if (level === undefined) {
-      return '';
-    }
-
-    if (value > level) {
+    if (data.rangeType === RangeType.Positive) {
       return 'positive';
-    }
-    if (value < level) {
+    } else if (data.rangeType === RangeType.Negative) {
       return 'negative';
     }
+
     return '';
   };
 
   return (
     <div className="metric-card panel">
-      <div className="metric-title">{title}</div>
+      <div className="metric-title">{data.name}</div>
       <div className={`metric-value ${getValueClass()}`}>{formatValue()}</div>
     </div>
   );

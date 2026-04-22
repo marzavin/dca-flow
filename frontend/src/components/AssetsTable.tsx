@@ -1,5 +1,5 @@
-import AssetModel from '../types/AssetModel';
 import { formatMoneyFull } from '../helpers/MoneyFormatter';
+import AssetModel from '../types/AssetModel';
 
 interface Props {
   data: AssetModel[];
