@@ -1,6 +1,6 @@
-import TransactionModel from '../types/TransactionModel';
 import { formatDateTime } from '../helpers/DateFormatter';
 import { formatMoneyFull } from '../helpers/MoneyFormatter';
+import TransactionModel from '../types/TransactionModel';
 import TransactionType from '../types/TransactionType';
 
 interface Props {
@@ -21,8 +21,8 @@ function TransactionsTable({ data }: Props) {
         <thead>
           <tr>
             <th>Ticker</th>
+            <th>Cost</th>
             <th>Amount</th>
-            <th>Quantity</th>
             <th>Type</th>
             <th>Date</th>
           </tr>

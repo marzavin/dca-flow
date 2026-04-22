@@ -1,6 +1,4 @@
-﻿using DCAFlow.Contracts.Enums;
-
-namespace DCAFlow.Contracts.Documents;
+﻿namespace DCAFlow.Contracts.Documents;
 
 public class TransactionDocument : DocumentBase
 {
@@ -8,7 +6,7 @@ public class TransactionDocument : DocumentBase
 
     public string Ticker { get; set; }
 
-    public TransactionType Type { get; set; }
+    public int Type { get; set; }
 
     public double? Cost { get; set; }
 

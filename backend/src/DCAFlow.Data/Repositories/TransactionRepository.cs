@@ -27,4 +27,11 @@ public class TransactionRepository
 
         collection.Insert(document);
     }
+
+    public void Delete(int id)
+    {
+        var collection = _database.GetCollection<TransactionDocument>(COLLECTION_NAME);
+
+        collection.Delete(id);
+    }
 }

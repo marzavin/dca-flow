@@ -1,14 +1,21 @@
 import { useEffect, useState } from 'react';
+
 import './App.less';
 import AssetsTable from './components/AssetsTable';
 import ChartTabs from './components/ChartTabs';
 import MetricCard from './components/MetricCard';
+import TransactionModal from './components/TransactionModal';
+import TransactionsTable from './components/TransactionsTable';
+import { getMetrics } from './helpers/MetricCalculator';
 import { useData } from './services/useData';
 import PortfolioModel from './types/PortfolioModel';
-import TransactionsTable from './components/TransactionsTable';
+import TransactionFormModel from './types/TransactionFormModel';
+import TransactionModel from './types/TransactionModel';
 
 function App() {
   const dataProvider = useData();
+
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const [portfolio, setPortfolio] = useState<PortfolioModel>({
     id: 0,
     name: 'New portfolio',
@@ -24,9 +31,44 @@ function App() {
 
   useEffect(() => {
     dataProvider.getPortfolio(1).then((result) => {
-      setPortfolio(result);
+      if (result !== null) {
+        setPortfolio(result);
+      }
     });
   }, [dataProvider]);
+
+  useEffect(() => {
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsTransactionModalOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', onEsc);
+    return () => window.removeEventListener('keydown', onEsc);
+  }, []);
+
+  const handleAddTransaction = async (data: TransactionFormModel) => {
+    const payload: TransactionModel = {
+      id: 0,
+      ticker: data.ticker,
+      amount: data.amount,
+      cost: data.cost,
+      type: data.type,
+      timestamp: new Date(data.timestamp),
+      portfolioId: portfolio.id
+    };
+
+    dataProvider.addTransaction(payload).then(function () {
+      dataProvider.getPortfolio(1).then((result) => {
+        if (result !== null) {
+          setPortfolio(result);
+        }
+      });
+    });
+  };
+
+  const metrics = getMetrics(portfolio);
 
   return (
     <>
@@ -35,15 +77,9 @@ function App() {
           <h1>Portfolio: {portfolio?.name}</h1>
         </header>
         <section className="metrics-block block">
-          <MetricCard title="Total Invested" value={portfolio.totalInvested} type="money" />
-          <MetricCard
-            title="Holdings Value"
-            value={portfolio.holdingsValue}
-            type="money"
-            level={portfolio.totalInvested}
-          />
-          <MetricCard title="ROI" value={portfolio.totalReturn * 100} type="percent" level={0} />
-          <MetricCard title="Assets" value={portfolio.assets.length} type="text" />
+          {metrics.map((item) => {
+            return <MetricCard key={item.name} data={item} />;
+          })}
         </section>
         <section className="charts-block block panel">
           <ChartTabs data={portfolio} />
@@ -56,23 +92,16 @@ function App() {
         </section>
         <section className="transactions-block block panel">
           <div className="block-header">Transactions</div>
-          <form className="transaction-form">
-            <input placeholder="Ticker" />
-            <input type="number" placeholder="Amount $" />
-            <input type="number" placeholder="Quantity" />
-            <select>
-              <option value="1">Buy</option>
-              <option value="2">Sell</option>
-              <option value="3">Transfer In</option>
-              <option value="4">Transfer Out</option>
-            </select>
-            <input type="datetime-local" />
-            <button type="submit">Add</button>
-          </form>
+          <button onClick={() => setIsTransactionModalOpen(true)}>+</button>
           <div className="transactions-table table">
             <TransactionsTable data={portfolio.transactions} />
           </div>
         </section>
+        <TransactionModal
+          isOpen={isTransactionModalOpen}
+          onClose={() => setIsTransactionModalOpen(false)}
+          onSubmit={handleAddTransaction}
+        />
       </div>
     </>
   );

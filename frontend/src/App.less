@@ -79,6 +79,93 @@ body {
         text-overflow: ellipsis;
       }
     }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      z-index: 1000;
+
+      .modal {
+        background: var(--bg-secondary-color);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        width: 420px;
+        padding: 20px;
+
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+
+        h3 {
+          margin: 0;
+        }
+
+        button {
+          background: none;
+          border: none;
+          color: var(--txt-secondary-color);
+          cursor: pointer;
+          font-size: 18px;
+        }
+      }
+
+      .modal-form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        label {
+          font-size: 12px;
+          color: var(--txt-secondary-color);
+        }
+
+        input,
+        select {
+          height: 36px;
+          padding: 0 10px;
+          background: var(--bg-primary-color);
+          border: 1px solid var(--border-color);
+          color: var(--txt-primary-color);
+          border-radius: 6px;
+        }
+      }
+
+      .submit-btn {
+        margin-top: 10px;
+        height: 38px;
+        background: #3b82f6;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+    }
   }
 }
 
@@ -171,36 +258,6 @@ body {
             color: var(--txt-secondary-color);
           }
         }
-      }
-    }
-  }
-}
-
-.transactions-block {
-  .transaction-form {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr) auto;
-    gap: 10px;
-    margin-bottom: 16px;
-
-    input,
-    select {
-      background: var(--bg-primary-color);
-      border: 1px solid var(--border-color);
-      color: var(--txt-primary-color);
-      padding: 8px;
-      border-radius: 6px;
-    }
-
-    button {
-      background: #3b82f6;
-      border: none;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-
-      &:hover {
-        opacity: 0.9;
       }
     }
   }

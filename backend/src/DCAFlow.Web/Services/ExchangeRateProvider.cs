@@ -35,23 +35,18 @@ public class ExchangeRateProvider : IExchangeRateProvider
         return thirdPartyProviderResult;
     }
 
-    public Task<KeyValueModel<DateOnly, double>> GetExchangeRateOnDateAsync(string ticker, DateOnly ts, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<List<KeyValueModel<DateOnly, double>>> GetExchangeRatesFromDateAsync(string ticker, DateOnly from, CancellationToken cancellationToken = default)
     {
-        var todayRate = _coinGeckoProvider.GetCurrentExchageRateAsync(ticker, cancellationToken);
+        var todayRate = await _coinGeckoProvider.GetCurrentExchageRateAsync(ticker, cancellationToken);
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var yesterday = today.AddDays(-1);
 
-        var rates = _exchangeRateRepository.GetHistoricalDailyRates(ticker, from.DayNumber, yesterday.DayNumber)
-            .Select(x => new KeyValueModel<DateOnly, double> { Key = DateOnly.FromDayNumber(x.DayNumber), Value = x.Rate })
+        var rates = _exchangeRateRepository.GetHistoricalDailyRates(ticker, from, yesterday)
+            .Select(x => new KeyValueModel<DateOnly, double> { Key = x.Timestamp, Value = x.Rate })
             .ToList();
   
-        if (rates.Count < (yesterday.ToDateTime(new TimeOnly(0, 0, 0)) - from.ToDateTime(new TimeOnly(0, 0, 0))).Days + 1)
+        if (rates.Count < (yesterday.ToDateTime(new TimeOnly(0, 0, 0), DateTimeKind.Utc) - from.ToDateTime(new TimeOnly(0, 0, 0), DateTimeKind.Utc)).Days + 1)
         {
             var newRates = new List<ExchangeRateDocument>();
 
@@ -64,7 +59,7 @@ public class ExchangeRateProvider : IExchangeRateProvider
                 {
                     rates.Add(thirdPartyRate);
 
-                    newRates.Add(new ExchangeRateDocument { Ticker = ticker, DayNumber = thirdPartyRate.Key.DayNumber, Rate = thirdPartyRate.Value });
+                    newRates.Add(new ExchangeRateDocument { Ticker = ticker, Timestamp = thirdPartyRate.Key, Rate = thirdPartyRate.Value });
                 }
             }
 
@@ -74,6 +69,8 @@ public class ExchangeRateProvider : IExchangeRateProvider
             }
         }
 
+        rates.Add(todayRate);
+
         return rates.OrderBy(x => x.Key).ToList();
     }
 
@@ -82,14 +79,6 @@ public class ExchangeRateProvider : IExchangeRateProvider
         return rates
             .GroupBy(x => new DateOnly(x.Key.Year, x.Key.Month, x.Key.Day))
             .Select(x => new KeyValueModel<DateOnly, double> { Key = x.Key, Value = x.OrderBy(x => x.Key).Last().Value })
-            .ToList();
-    }
-
-    private List<KeyValueModel<DateOnly, double>> GetAverageDailyRates(List<KeyValueModel<DateTime, double>> rates)
-    {
-        return rates
-            .GroupBy(x => new DateOnly(x.Key.Year, x.Key.Month, x.Key.Day))
-            .Select(x => new KeyValueModel<DateOnly, double> { Key = x.Key, Value = x.OrderBy(x => x.Key).Sum(x => x.Value) / x.Count() })
             .ToList();
     }
 }
