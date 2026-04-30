@@ -99,8 +99,10 @@ function App() {
         <section className="transactions-block block panel">
           <div className="block-header">
             <span>Transactions</span>
+            <button className="icon-button" onClick={() => setIsTransactionModalOpen(true)}>
+              +
+            </button>
           </div>
-          <button onClick={() => setIsTransactionModalOpen(true)}>+</button>
           <div className="transactions-table table">
             <TransactionsTable data={portfolio.transactions} />
           </div>
