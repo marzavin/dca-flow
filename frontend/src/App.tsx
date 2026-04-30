@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import './App.less';
 import AssetsTable from './components/AssetsTable';
 import ChartTabs from './components/ChartTabs';
+import Header from './components/Header';
 import MetricCard from './components/MetricCard';
 import TransactionModal from './components/TransactionModal';
 import TransactionsTable from './components/TransactionsTable';
@@ -72,10 +73,13 @@ function App() {
 
   return (
     <>
-      <div className="dashboard">
-        <header className="header">
-          <h1>Portfolio: {portfolio?.name}</h1>
-        </header>
+      <header className="app-header">
+        <span>DCA Flow</span>
+      </header>
+      <main className="app-content">
+        <div className="content-header">
+          <span>Portfolio: {portfolio?.name}</span>
+        </div>
         <section className="metrics-block block">
           {metrics.map((item) => {
             return <MetricCard key={item.name} data={item} />;
@@ -85,13 +89,17 @@ function App() {
           <ChartTabs data={portfolio} />
         </section>
         <section className="assets-block block panel">
-          <div className="block-header">Assets</div>
+          <div className="block-header">
+            <span>Assets</span>
+          </div>
           <div className="assets-table table">
             <AssetsTable data={portfolio.assets} />
           </div>
         </section>
         <section className="transactions-block block panel">
-          <div className="block-header">Transactions</div>
+          <div className="block-header">
+            <span>Transactions</span>
+          </div>
           <button onClick={() => setIsTransactionModalOpen(true)}>+</button>
           <div className="transactions-table table">
             <TransactionsTable data={portfolio.transactions} />
@@ -102,7 +110,7 @@ function App() {
           onClose={() => setIsTransactionModalOpen(false)}
           onSubmit={handleAddTransaction}
         />
-      </div>
+      </main>
     </>
   );
 }

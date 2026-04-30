@@ -17,6 +17,11 @@
 body {
   margin: 0;
   padding: 0;
+  font-family: 'JetBrains Mono', monospace;
+
+  button {
+    font-family: 'JetBrains Mono', monospace;
+  }
 
   .positive {
     color: var(--chart-green-color);
@@ -26,30 +31,31 @@ body {
     color: var(--chart-red-color);
   }
 
-  .dashboard {
+  .app-header {
+    padding: 16px 0;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-primary-color);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--txt-primary-color);
+  }
+
+  .app-content {
     padding: 24px;
     background: var(--bg-primary-color);
     color: var(--txt-primary-color);
     min-height: 100vh;
-    font-family: Inter, sans-serif;
 
-    .header {
-      margin-bottom: 24px;
-
-      h1 {
-        font-size: 24px;
-        font-weight: 600;
-      }
-    }
-
-    .block {
-      margin-bottom: 24px;
-
-      .block-header {
-        font-size: 16px;
-        margin-bottom: 12px;
-        color: var(--txt-secondary-color);
-      }
+    .content-header {
+      padding: 16px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--txt-primary-color);
     }
 
     .panel {
@@ -59,24 +65,131 @@ body {
       padding: 16px;
     }
 
-    .table table {
-      width: 100%;
-      table-layout: fixed;
-      border-collapse: collapse;
-
-      th {
-        text-align: left;
-        font-size: 12px;
-        color: var(--txt-secondary-color);
-        padding-bottom: 8px;
+    .block {
+      &:not(:last-child) {
+        margin-bottom: 24px;
       }
 
-      td {
+      &.metrics-block {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+
+        .metric-card {
+          .metric-title {
+            font-size: 14px;
+            color: var(--txt-secondary-color);
+            margin-bottom: 8px;
+          }
+
+          .metric-value {
+            font-size: 24px;
+            font-weight: 600;
+          }
+        }
+      }
+
+      &.charts-block {
+        .chart-tabs {
+          display: flex;
+          gap: 8px;
+          margin-bottom: 16px;
+
+          button {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--txt-secondary-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+
+            &:hover {
+              background: rgba(var(--border-color-rgb), 0.2);
+            }
+
+            &.active {
+              background: var(--bg-primary-color);
+              color: var(--txt-primary-color);
+              border-color: var(--txt-primary-color);
+            }
+          }
+        }
+
+        .chart-container {
+          width: 100%;
+          height: 300px;
+
+          .recharts-wrapper *:focus,
+          .recharts-wrapper *:focus-visible {
+            outline: none !important;
+          }
+
+          &.pie-wrapper {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            justify-content: center;
+
+            .pie-chart {
+              flex: 0 0 300px;
+            }
+
+            .pie-legend {
+              display: flex;
+              flex-direction: column;
+              gap: 10px;
+
+              .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .legend-color {
+                  width: 16px;
+                  height: 16px;
+                  border-radius: 50%;
+                }
+
+                .legend-name {
+                  flex: 1;
+                  color: var(--txt-primary-color);
+                }
+
+                .legend-value {
+                  color: var(--txt-secondary-color);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .block-header {
         padding: 12px 0;
-        border-top: 1px solid var(--border-color);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--txt-secondary-color);
+      }
+
+      .table table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+
+        th {
+          text-align: left;
+          font-size: 12px;
+          color: var(--txt-secondary-color);
+          padding-bottom: 8px;
+        }
+
+        td {
+          padding: 12px 0;
+          border-top: 1px solid var(--border-color);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
     }
 
@@ -163,100 +276,6 @@ body {
 
         &:hover {
           opacity: 0.9;
-        }
-      }
-    }
-  }
-}
-
-.metrics-block {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-
-  .metric-card {
-    .metric-title {
-      font-size: 14px;
-      color: var(--txt-secondary-color);
-      margin-bottom: 8px;
-    }
-
-    .metric-value {
-      font-size: 24px;
-      font-weight: 600;
-    }
-  }
-}
-
-.charts-block {
-  .chart-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
-
-    button {
-      background: transparent;
-      border: 1px solid var(--border-color);
-      color: var(--txt-secondary-color);
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-
-      &:hover {
-        background: rgba(var(--border-color-rgb), 0.2);
-      }
-
-      &.active {
-        background: var(--bg-primary-color);
-        color: var(--txt-primary-color);
-        border-color: var(--txt-primary-color);
-      }
-    }
-  }
-
-  .chart-container {
-    width: 100%;
-    height: 300px;
-
-    .recharts-wrapper *:focus,
-    .recharts-wrapper *:focus-visible {
-      outline: none !important;
-    }
-
-    &.pie-wrapper {
-      display: flex;
-      gap: 24px;
-      align-items: center;
-      justify-content: center;
-
-      .pie-chart {
-        flex: 0 0 300px;
-      }
-
-      .pie-legend {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-
-        .legend-item {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-
-          .legend-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-          }
-
-          .legend-name {
-            flex: 1;
-            color: var(--txt-primary-color);
-          }
-
-          .legend-value {
-            color: var(--txt-secondary-color);
-          }
         }
       }
     }

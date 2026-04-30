@@ -62,6 +62,7 @@ function PerformanceChart({ totalInvestedTimeline, holdingsValueTimeline }: Prop
           <Line
             type="monotone"
             dataKey="holdingsValue"
+            name="Holdings Value"
             stroke="#22c55e"
             strokeWidth={2}
             dot={false}
@@ -71,6 +72,7 @@ function PerformanceChart({ totalInvestedTimeline, holdingsValueTimeline }: Prop
           <Line
             type="monotone"
             dataKey="totalInvested"
+            name="Total Invested"
             stroke="#ef4444"
             strokeWidth={2}
             dot={false}
