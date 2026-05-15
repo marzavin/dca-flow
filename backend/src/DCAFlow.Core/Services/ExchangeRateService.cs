@@ -1,43 +1,30 @@
 ﻿using DCAFlow.Contracts.Documents;
+using DCAFlow.Contracts.Interfaces;
 using DCAFlow.Contracts.Models;
 using DCAFlow.Data.Repositories;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace DCAFlow.Web.Services;
+namespace DCAFlow.Core.Services;
 
-public class ExchangeRateProvider : IExchangeRateProvider
+public sealed class ExchangeRateService
 {
     private readonly ExchangeRateRepository _exchangeRateRepository;
-    private readonly CoinGeckoRateProvider _coinGeckoProvider;
+    private readonly IExchangeRateProvider _exchangeRateProvider;
     private readonly IMemoryCache _cache;
 
-    public ExchangeRateProvider(
+    public ExchangeRateService(
         ExchangeRateRepository exchangeRateRepository,
-        CoinGeckoRateProvider coinGeckoProvider, 
+        IExchangeRateProvider exchangeRateProvider, 
         IMemoryCache memoryCache)
     {
         _exchangeRateRepository = exchangeRateRepository ?? throw new ArgumentNullException(nameof(exchangeRateRepository));
-        _coinGeckoProvider = coinGeckoProvider ?? throw new ArgumentNullException(nameof(coinGeckoProvider));
+        _exchangeRateProvider = exchangeRateProvider ?? throw new ArgumentNullException(nameof(exchangeRateProvider));
         _cache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
-    }
-
-    public async Task<KeyValueModel<DateOnly, double>> GetCurrentExchageRateAsync(string ticker, CancellationToken cancellationToken = default)
-    {
-        if (_cache.TryGetValue(ticker, out double cachedPrice))
-        {
-            return new KeyValueModel<DateOnly, double> { Key = DateOnly.FromDateTime(DateTime.UtcNow), Value = cachedPrice };
-        }
-
-        var thirdPartyProviderResult = await _coinGeckoProvider.GetCurrentExchageRateAsync(ticker, cancellationToken);
-
-        _cache.Set(ticker, thirdPartyProviderResult.Value, TimeSpan.FromSeconds(30));
-
-        return thirdPartyProviderResult;
     }
 
     public async Task<List<KeyValueModel<DateOnly, double>>> GetExchangeRatesFromDateAsync(string ticker, DateOnly from, CancellationToken cancellationToken = default)
     {
-        var todayRate = await _coinGeckoProvider.GetCurrentExchageRateAsync(ticker, cancellationToken);
+        var todayRate = await GetCurrentExchageRateAsync(ticker, cancellationToken);
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var yesterday = today.AddDays(-1);
@@ -50,7 +37,7 @@ public class ExchangeRateProvider : IExchangeRateProvider
         {
             var newRates = new List<ExchangeRateDocument>();
 
-            var thirdPartyRates = await _coinGeckoProvider.GetHistoricalRatesAsync(ticker, from, today, cancellationToken);
+            var thirdPartyRates = await _exchangeRateProvider.GetHistoricalRatesAsync(ticker, from, today, cancellationToken);
             var lastDailyRates = GetLastDailyRates(thirdPartyRates);
 
             foreach (var thirdPartyRate in lastDailyRates)
@@ -69,16 +56,29 @@ public class ExchangeRateProvider : IExchangeRateProvider
             }
         }
 
-        rates.Add(todayRate);
+        rates.Add(new KeyValueModel<DateOnly, double> { Key = today, Value = todayRate });
 
-        return rates.OrderBy(x => x.Key).ToList();
+        return [.. rates.OrderBy(x => x.Key)];
     }
 
-    private List<KeyValueModel<DateOnly, double>> GetLastDailyRates(List<KeyValueModel<DateTime, double>> rates)
+    private async Task<double> GetCurrentExchageRateAsync(string ticker, CancellationToken cancellationToken = default)
     {
-        return rates
+        if (_cache.TryGetValue(ticker, out double cachedPrice))
+        {
+            return cachedPrice;
+        }
+
+        var thirdPartyProviderResult = await _exchangeRateProvider.GetCurrentExchageRateAsync(ticker, cancellationToken);
+
+        _cache.Set(ticker, thirdPartyProviderResult, TimeSpan.FromSeconds(30));
+
+        return thirdPartyProviderResult;
+    }
+
+    private static List<KeyValueModel<DateOnly, double>> GetLastDailyRates(List<KeyValueModel<DateTime, double>> rates)
+    {
+        return [.. rates
             .GroupBy(x => new DateOnly(x.Key.Year, x.Key.Month, x.Key.Day))
-            .Select(x => new KeyValueModel<DateOnly, double> { Key = x.Key, Value = x.OrderBy(x => x.Key).Last().Value })
-            .ToList();
+            .Select(x => new KeyValueModel<DateOnly, double> { Key = x.Key, Value = x.OrderBy(x => x.Key).Last().Value })];
     }
 }

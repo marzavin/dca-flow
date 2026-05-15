@@ -14,7 +14,7 @@ public class TransactionModel
 
     public TransactionType Type { get; set; }
 
-    public double? Cost { get; set; }
+    public double Cost { get; set; }
 
     public double Amount { get; set; }
 }

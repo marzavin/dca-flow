@@ -1,9 +1,9 @@
 using DCAFlow.Contracts.Documents;
-using DCAFlow.Contracts.Models;
+using DCAFlow.Contracts.Interfaces;
+using DCAFlow.Core.Services;
 using DCAFlow.Data.Repositories;
-using DCAFlow.Web.Services;
+using DCAFlow.Web.Providers;
 using DCAFlow.Web.Settings;
-using DCAFlow.Web.Validators;
 using LiteDB;
 using System.Reflection;
 
@@ -47,14 +47,21 @@ builder.Services.AddHttpClient(DCAFlow.Web.Constants.HttpClients.CoinGeckoClient
 builder.Services.AddScoped<TransactionRepository>();
 builder.Services.AddScoped<PortfolioRepository>();
 builder.Services.AddScoped<ExchangeRateRepository>();
-builder.Services.AddScoped<CoinGeckoRateProvider>();
-builder.Services.AddScoped<ExchangeRateProvider>();
-builder.Services.AddScoped<PortfolioService>();
+
+builder.Services.AddScoped<IExchangeRateProvider, CoinGeckoRateProvider>();
+
 builder.Services.AddScoped<CoinService>();
+builder.Services.AddScoped<ExchangeRateService>();
+builder.Services.AddScoped<PortfolioService>();
+builder.Services.AddScoped<TransactionService>();
 
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+app.UseDefaultFiles();
+
+app.UseStaticFiles();
 
 app.UseCors("AllowAll");
 

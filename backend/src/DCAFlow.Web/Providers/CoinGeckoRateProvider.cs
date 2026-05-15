@@ -1,11 +1,13 @@
-﻿using DCAFlow.Contracts.Models;
+﻿using DCAFlow.Contracts.Interfaces;
+using DCAFlow.Contracts.Models;
+using DCAFlow.Core.Services;
 using DCAFlow.Web.Settings;
 using System.Text.Json;
 using static DCAFlow.Web.Constants;
 
-namespace DCAFlow.Web.Services;
+namespace DCAFlow.Web.Providers;
 
-public class CoinGeckoRateProvider
+public class CoinGeckoRateProvider : IExchangeRateProvider
 {
     private readonly CoinGeckoSettings _settings;
 
@@ -21,7 +23,7 @@ public class CoinGeckoRateProvider
         _supportedCoins = coinService.GetSupportedCoins();
     }
 
-    public async Task<KeyValueModel<DateOnly, double>> GetCurrentExchageRateAsync(string ticker, CancellationToken cancellationToken = default)
+    public async Task<double> GetCurrentExchageRateAsync(string ticker, CancellationToken cancellationToken = default)
     {
         var coinId = _supportedCoins.First(x => x.Ticker == ticker).CoinGeckoId;
         
@@ -35,11 +37,7 @@ public class CoinGeckoRateProvider
         var json = await response.Content.ReadAsStringAsync(cancellationToken);
 
         using var doc = JsonDocument.Parse(json);
-        return new KeyValueModel<DateOnly, double>
-        {
-            Key = DateOnly.FromDateTime(DateTime.UtcNow),
-            Value = doc.RootElement.GetProperty(coinId).GetProperty("usd").GetDouble()
-        };
+        return doc.RootElement.GetProperty(coinId).GetProperty("usd").GetDouble();
     }
 
     public async Task<KeyValueModel<DateOnly, double>> GetExchangeRateOnDateAsync(string ticker, DateOnly ts, CancellationToken cancellationToken = default)

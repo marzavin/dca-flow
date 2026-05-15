@@ -8,7 +8,7 @@ public class TransactionDocument : DocumentBase
 
     public int Type { get; set; }
 
-    public double? Cost { get; set; }
+    public double Cost { get; set; }
 
     public double Amount { get; set; }
 
