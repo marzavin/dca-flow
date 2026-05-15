@@ -16,7 +16,7 @@ public sealed class TransactionModelValidator : AbstractValidator<TransactionMod
         RuleFor(x => x.PortfolioId).GreaterThan(0);
         RuleFor(x => x.Type).Must(x => Enum.GetValues<TransactionType>().Contains(x));
         RuleFor(x => x.Amount).GreaterThan(0D);
-        RuleFor(x => x.Cost).Null().When(x => x.Type == TransactionType.TransferIn || x.Type == TransactionType.TransferOut);
+        RuleFor(x => x.Cost).Equal(0).When(x => x.Type == TransactionType.TransferIn || x.Type == TransactionType.TransferOut);
         RuleFor(x => x.Cost).NotNull().When(x => x.Type == TransactionType.Sell || x.Type == TransactionType.Buy);
         RuleFor(x => x.Cost).GreaterThan(0D).When(x => x.Type == TransactionType.Sell || x.Type == TransactionType.Buy);
     }

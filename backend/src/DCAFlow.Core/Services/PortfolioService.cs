@@ -187,7 +187,7 @@ public sealed class PortfolioService
             return new Tuple<List<KeyValueModel<DateOnly, double>>, List<KeyValueModel<DateOnly, double>>>([], []);
         }
        
-        var valuesByTickers = new Dictionary<string, double>();
+        var valuesByTickers = context.Tickers.ToDictionary(x => x, x => 0D);
         var totalInvestedValue = 0D;
 
         var orderedTransactions = transactions.OrderBy(x => x.Timestamp).ToList();
@@ -252,8 +252,8 @@ public sealed class PortfolioService
     {
         return transaction.Type switch
         {
-            TransactionType.Buy => transaction.Cost.Value,
-            TransactionType.Sell => -1D * transaction.Cost.Value,
+            TransactionType.Buy => transaction.Cost,
+            TransactionType.Sell => -1D * transaction.Cost,
             TransactionType.TransferIn => 0D,
             TransactionType.TransferOut => 0D,
             _ => 0D

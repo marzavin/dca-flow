@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import './App.less';
 import AssetsTable from './components/AssetsTable';
 import ChartTabs from './components/ChartTabs';
-import Header from './components/Header';
 import MetricCard from './components/MetricCard';
 import TransactionModal from './components/TransactionModal';
 import TransactionsTable from './components/TransactionsTable';
