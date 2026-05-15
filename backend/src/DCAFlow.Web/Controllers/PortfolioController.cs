@@ -1,4 +1,4 @@
-﻿using DCAFlow.Web.Services;
+﻿using DCAFlow.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DCAFlow.Web.Controllers;

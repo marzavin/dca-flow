@@ -17,8 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\DCAFlow.Contracts\DCAFlow.Contracts.csproj" />
-	  <ProjectReference Include="..\DCAFlow.Data\DCAFlow.Data.csproj" />
+	  <ProjectReference Include="..\DCAFlow.Core\DCAFlow.Core.csproj" />
 	</ItemGroup>
 
 </Project>

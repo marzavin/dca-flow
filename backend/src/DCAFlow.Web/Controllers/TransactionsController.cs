@@ -1,7 +1,7 @@
 ﻿using DCAFlow.Contracts.Enums;
 using DCAFlow.Contracts.Models;
+using DCAFlow.Core.Services;
 using DCAFlow.Web.Models;
-using DCAFlow.Web.Services;
 using DCAFlow.Web.Validators;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,13 +11,13 @@ namespace DCAFlow.Web.Controllers;
 [Route("api/transactions")]
 public class TransactionsController : ControllerBase
 {
-    private readonly PortfolioService _portfolioService;
+    private readonly TransactionService _transactionService;
 
     private readonly CoinService _coinService;
 
-    public TransactionsController(PortfolioService portfolioService, CoinService coinService)
+    public TransactionsController(TransactionService transactionService, CoinService coinService)
     {
-        _portfolioService = portfolioService ?? throw new ArgumentNullException(nameof(portfolioService));
+        _transactionService = transactionService ?? throw new ArgumentNullException(nameof(transactionService));
         _coinService = coinService ?? throw new ArgumentNullException(nameof(coinService));
     }
 
@@ -34,7 +34,7 @@ public class TransactionsController : ControllerBase
             });
         }
 
-        await _portfolioService.AddTransactionAsync(model, cancellationToken);
+        await _transactionService.AddTransactionAsync(model, cancellationToken);
 
         return NoContent();
     }
@@ -42,7 +42,7 @@ public class TransactionsController : ControllerBase
     [HttpDelete("{transactionId}")]
     public async Task<IActionResult> DeleteTransaction([FromRoute] int transactionId, CancellationToken cancellationToken = default)
     {
-        await _portfolioService.DeleteTransactionAsync(transactionId, cancellationToken);
+        await _transactionService.DeleteTransactionAsync(transactionId, cancellationToken);
 
         return NoContent();
     }
