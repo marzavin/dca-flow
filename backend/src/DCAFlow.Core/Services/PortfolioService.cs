@@ -31,7 +31,7 @@ public sealed class PortfolioService
         var transactionDocuments = _transactionRepository.GetPortfolioTransactions(portfolioId);
         var transactions = transactionDocuments?.Select(TransactionMapper.Map).ToList() ?? [];
 
-        if(transactions.Count == 0)
+        if (transactions.Count == 0)
         {
             return portfolio;
         }
@@ -50,8 +50,8 @@ public sealed class PortfolioService
     }
 
     private async Task<PortfolioContextModel> InitPortfolioContextAsync(
-        DateOnly startDate, 
-        List<string> tickers, 
+        DateOnly startDate,
+        List<string> tickers,
         CancellationToken cancellationToken = default)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -87,9 +87,9 @@ public sealed class PortfolioService
     }
 
     private static Task FillTransactionDataAsync(
-        PortfolioContextModel context, 
-        PortfolioModel portfolio, 
-        List<TransactionModel> transactions, 
+        PortfolioContextModel context,
+        PortfolioModel portfolio,
+        List<TransactionModel> transactions,
         CancellationToken cancellationToken = default)
     {
         portfolio.Transactions = transactions.OrderByDescending(x => x.Timestamp).ToList();
@@ -125,6 +125,7 @@ public sealed class PortfolioService
         portfolio.TotalInvested = portfolio.Assets.Sum(x => x.TotalInvested);
         portfolio.HoldingsValue = portfolio.Assets.Sum(x => x.HoldingsValue);
         portfolio.TotalReturn = CalculateTotalReturn(portfolio.TotalInvested, portfolio.HoldingsValue);
+        portfolio.AnnualizedReturn = CalculateAnnualizedReturn(portfolio.Transactions, DateTime.UtcNow, portfolio.HoldingsValue);
 
         return Task.CompletedTask;
     }
@@ -150,6 +151,7 @@ public sealed class PortfolioService
 
         portfolio.TotalInvestedTimeline = timelines.Item1;
         portfolio.HoldingsValueTimeline = timelines.Item2;
+        portfolio.AnnualizedReturnTimeline = timelines.Item3;
     }
 
     private static AssetModel GetAssetDetails(string ticker, double currentMarketPrice, List<TransactionModel> transactions)
@@ -177,16 +179,16 @@ public sealed class PortfolioService
         return model;
     }
 
-    private static Tuple<List<KeyValueModel<DateOnly, double>>, List<KeyValueModel<DateOnly, double>>> GetTimelines(
+    private static Tuple<List<KeyValueModel<DateOnly, double>>, List<KeyValueModel<DateOnly, double>>, List<KeyValueModel<DateOnly, double>>> GetTimelines(
         PortfolioContextModel context,
         List<TransactionModel> transactions,
         CancellationToken cancellationToken)
     {
         if (transactions is null || transactions.Count == 0)
         {
-            return new Tuple<List<KeyValueModel<DateOnly, double>>, List<KeyValueModel<DateOnly, double>>>([], []);
+            return new Tuple<List<KeyValueModel<DateOnly, double>>, List<KeyValueModel<DateOnly, double>>, List<KeyValueModel<DateOnly, double>>>([], [], []);
         }
-       
+
         var valuesByTickers = context.Tickers.ToDictionary(x => x, x => 0D);
         var totalInvestedValue = 0D;
 
@@ -194,9 +196,12 @@ public sealed class PortfolioService
 
         var totalInvestedTimeline = new List<KeyValueModel<DateOnly, double>>();
         var holdingsValueTimeline = new List<KeyValueModel<DateOnly, double>>();
+        var annualizedReturnTimeline = new List<KeyValueModel<DateOnly, double>>();
 
         var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
         var date = context.TimeFrame.StartDate;
+        var investmentDayNumber = 0;
+        var frequency = GetAnnualizedReturnFrequency(context.TimeFrame);
 
         while (date <= currentDate)
         {
@@ -221,11 +226,92 @@ public sealed class PortfolioService
             }
 
             holdingsValueTimeline.Add(holdingsValueOnDate);
+        
+            if (investmentDayNumber % frequency == 0)
+            {
+                var nextDay = date.AddDays(1);
+
+                if (investmentDayNumber == 0)
+                {
+                    annualizedReturnTimeline.Add(new KeyValueModel<DateOnly, double> { Key = date, Value = 0D });
+                }
+                else 
+                {
+                    var timestamp = date == currentDate ? DateTime.UtcNow : nextDay.ToDateTime(new TimeOnly(), DateTimeKind.Utc);
+                    var annualizedReturnValue = CalculateAnnualizedReturn(transactions, timestamp, holdingsValueOnDate.Value);
+                    if (annualizedReturnValue.HasValue)
+                    {
+                        annualizedReturnTimeline.Add(new KeyValueModel<DateOnly, double> { Key = date, Value = annualizedReturnValue.Value });
+                    }
+                }
+            }
 
             date = date.AddDays(1);
+
+            investmentDayNumber++;
         }
 
-        return new Tuple<List<KeyValueModel<DateOnly, double>>, List<KeyValueModel<DateOnly, double>>>(totalInvestedTimeline, holdingsValueTimeline);
+        return new Tuple<List<KeyValueModel<DateOnly, double>>, List<KeyValueModel<DateOnly, double>>, List<KeyValueModel<DateOnly, double>>>(
+            totalInvestedTimeline, holdingsValueTimeline, annualizedReturnTimeline);
+    }
+
+    private static int GetAnnualizedReturnFrequency(TimeFrameModel timeFrame)
+    {
+        var investmentPeriodDays = timeFrame.EndDate.DayNumber - timeFrame.StartDate.DayNumber + 1;
+        
+        if (investmentPeriodDays > 720)
+        {
+            return 30;
+        }
+        else if (investmentPeriodDays > 360)
+        {
+            return 7;
+        }
+        else if (investmentPeriodDays > 180)
+        {
+            return 3;
+        }
+        else if (investmentPeriodDays > 90)
+        {
+            return 2;
+        }
+
+        return 1;
+    }
+
+    private static double? CalculateAnnualizedReturn(List<TransactionModel> transactions, DateTime timestamp, double holdingsValue)
+    {
+        if (transactions.Count == 0)
+        {
+            return null;
+        }
+
+        var cashFlows = GetCashFlowRecords(transactions, timestamp, holdingsValue);
+
+        try
+        {
+            return AnnualizedReturnCalculator.CalculateAnnualizedReturn(cashFlows);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private static List<CashFlowModel> GetCashFlowRecords(List<TransactionModel> transactions, DateTime timestamp, double holdingsValue)
+    {
+        var cashFlows = transactions
+            .Where(x => (x.Type == TransactionType.Buy || x.Type == TransactionType.Sell) && timestamp > x.Timestamp)
+            .Select(x => new CashFlowModel
+            {
+                Timestamp = x.Timestamp,
+                Value = x.Type == TransactionType.Buy ? -x.Cost : x.Cost
+            })
+            .ToList();
+
+        cashFlows.Add(new CashFlowModel { Timestamp = timestamp, Value = holdingsValue });
+
+        return cashFlows;
     }
 
     private static double CalculateTotalValue(double amount, double price)

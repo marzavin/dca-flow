@@ -9,11 +9,13 @@ interface PortfolioModel {
   totalInvested: number;
   holdingsValue: number;
   totalReturn: number;
+  annualizedReturn: number | null;
   assets: AssetModel[];
   allocation: FractionModel[];
   transactions: TransactionModel[];
   totalInvestedTimeline: KeyValueModel<Date, number>[];
   holdingsValueTimeline: KeyValueModel<Date, number>[];
+  annualizedReturnTimeline: KeyValueModel<Date, number>[];
 }
 
 export default PortfolioModel;
