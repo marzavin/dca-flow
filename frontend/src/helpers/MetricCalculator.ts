@@ -54,6 +54,15 @@ export function getMetrics(portfolio: PortfolioModel): MetricModel[] {
     rangeType: getRangeTypeByLevel(portfolio.totalReturn, 0)
   });
 
+  if (portfolio.annualizedReturn !== null) {
+    metrics.push({
+      name: 'Annualized Return',
+      value: portfolio.annualizedReturn * 100,
+      metricType: MetricType.Percent,
+      rangeType: getRangeTypeByLevel(portfolio.annualizedReturn, 0)
+    });
+  }
+
   metrics.push({
     name: 'Assets',
     value: portfolio.assets.length,

@@ -25,8 +25,10 @@ function App() {
     holdingsValue: 0,
     totalInvested: 0,
     totalReturn: 0,
+    annualizedReturn: null,
     totalInvestedTimeline: [],
-    holdingsValueTimeline: []
+    holdingsValueTimeline: [],
+    annualizedReturnTimeline: []
   });
 
   useEffect(() => {

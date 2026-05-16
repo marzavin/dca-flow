@@ -12,6 +12,8 @@ public class PortfolioModel
 
     public double TotalReturn { get; set; }
 
+    public double? AnnualizedReturn { get; set; }
+
     public List<AssetModel> Assets { get; set; }
 
     public List<FractionModel> Allocation { get; set; }
@@ -21,6 +23,8 @@ public class PortfolioModel
     public List<KeyValueModel<DateOnly, double>> TotalInvestedTimeline { get; set; }
 
     public List<KeyValueModel<DateOnly, double>> HoldingsValueTimeline { get; set; }
+
+    public List<KeyValueModel<DateOnly, double>> AnnualizedReturnTimeline { get; set; }
 
     public List<KeyValueModel<DateOnly, List<FractionModel>>> AllocationTimeline { get; set; }
 }

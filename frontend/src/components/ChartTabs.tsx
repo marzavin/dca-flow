@@ -1,14 +1,16 @@
 import { useState } from 'react';
 
 import AllocationChart from './AllocationChart';
+import AnnualizedReturnChart from './AnnualizedReturnChart';
 import PerformanceChart from './PerformanceChart';
 import PortfolioModel from '../types/PortfolioModel';
 
-type Tab = 'allocation' | 'performance';
+type Tab = 'allocation' | 'performance' | 'annualizedReturn';
 
 const tabs = [
   { id: 'allocation', label: 'Allocation' },
-  { id: 'performance', label: 'Performance' }
+  { id: 'performance', label: 'Performance' },
+  { id: 'annualizedReturn', label: 'Annualized Return' }
 ];
 
 interface Props {
@@ -31,12 +33,15 @@ function ChartTabs({ data }: Props) {
           </button>
         ))}
       </div>
-      {activeTab === 'allocation' && <AllocationChart data={data.allocation} />}
+      {activeTab === 'allocation' && <AllocationChart allocation={data.allocation} />}
       {activeTab === 'performance' && (
         <PerformanceChart
           totalInvestedTimeline={data.totalInvestedTimeline}
           holdingsValueTimeline={data.holdingsValueTimeline}
         />
+      )}
+      {activeTab === 'annualizedReturn' && (
+        <AnnualizedReturnChart annualizedReturnTimeline={data.annualizedReturnTimeline} />
       )}
     </>
   );
