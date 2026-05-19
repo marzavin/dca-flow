@@ -8,8 +8,8 @@ import PortfolioModel from '../types/PortfolioModel';
 import TransactionModel from '../types/TransactionModel';
 
 const createDataProvider = (): IDataProvider => {
-  //const baseUrl = window.location.origin;
-  const baseUrl = 'http://localhost:5500';
+  const baseUrl = window.location.origin;
+  //const baseUrl = 'http://localhost:5500';
   const axiosInstance = axios.create();
   const serverErrorText = 'An error occurred during execution your request.';
 
