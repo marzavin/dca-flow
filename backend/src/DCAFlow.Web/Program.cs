@@ -27,9 +27,9 @@ builder.Services.AddSingleton(sp =>
 {
     var mapper = BsonMapper.Global;
     mapper.Entity<DocumentBase>().Id(x => x.Id);
-    mapper.Entity<PortfolioDocument>().Id(x => x.Id);
-    mapper.Entity<TransactionDocument>().Id(x => x.Id);
-    mapper.Entity<ExchangeRateDocument>().Id(x => x.Id);
+    mapper.Entity<PortfolioDocument>().Id<>(x => x.Id);
+    mapper.Entity<TransactionDocument>().Id<>(x => x.Id);
+    mapper.Entity<ExchangeRateDocument>().Id<>(x => x.Id);
 
     return new LiteDatabase(connectionString, mapper);
 });

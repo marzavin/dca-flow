@@ -1,28 +1,13 @@
-﻿using DCAFlow.Contracts.Documents;
+﻿using DCAFlow.Data.Entities;
 using LiteDB;
 
 namespace DCAFlow.Data.Repositories;
 
-public class PortfolioRepository
+public class PortfolioRepository : RepositoryBase<PortfolioEntity>
 {
-    private readonly LiteDatabase _database;
+    protected override string CollectionName => "portfolios";
 
     public PortfolioRepository(LiteDatabase database)
-    {
-        _database = database ?? throw new ArgumentNullException(nameof(database));
-    }
-
-    public List<PortfolioDocument> GetPortfolios()
-    {
-        var collection = _database.GetCollection<PortfolioDocument>("portfolios");
-
-        return [.. collection.FindAll()];
-    }
-
-    public PortfolioDocument GetPortfolioById(int portfolioId)
-    {
-        var collection = _database.GetCollection<PortfolioDocument>("portfolios");
-
-        return collection.Find(x => x.Id == portfolioId).FirstOrDefault();
-    }
+        : base(database)
+    { }
 }
