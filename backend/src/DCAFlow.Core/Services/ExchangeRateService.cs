@@ -1,6 +1,7 @@
-﻿using DCAFlow.Contracts.Documents;
-using DCAFlow.Contracts.Interfaces;
+﻿using DCAFlow.Contracts.Interfaces;
 using DCAFlow.Contracts.Models;
+using DCAFlow.Data.Entities;
+using DCAFlow.Data.Filters;
 using DCAFlow.Data.Repositories;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -29,13 +30,14 @@ public sealed class ExchangeRateService
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var yesterday = today.AddDays(-1);
 
-        var rates = _exchangeRateRepository.GetHistoricalDailyRates(ticker, from, yesterday)
+        var rateFilter = new ExchangeRateFilter { TickerEq = ticker, TimestampGte = from, TimestampLte = yesterday };
+        var rates = (await _exchangeRateRepository.SearchAsync(rateFilter, cancellationToken))
             .Select(x => new KeyValueModel<DateOnly, double> { Key = x.Timestamp, Value = x.Rate })
             .ToList();
   
         if (rates.Count < (yesterday.ToDateTime(new TimeOnly(0, 0, 0), DateTimeKind.Utc) - from.ToDateTime(new TimeOnly(0, 0, 0), DateTimeKind.Utc)).Days + 1)
         {
-            var newRates = new List<ExchangeRateDocument>();
+            var newRates = new List<ExchangeRateEntity>();
 
             var thirdPartyRates = await _exchangeRateProvider.GetHistoricalRatesAsync(ticker, from, today, cancellationToken);
             var lastDailyRates = GetLastDailyRates(thirdPartyRates);
@@ -46,13 +48,13 @@ public sealed class ExchangeRateService
                 {
                     rates.Add(thirdPartyRate);
 
-                    newRates.Add(new ExchangeRateDocument { Ticker = ticker, Timestamp = thirdPartyRate.Key, Rate = thirdPartyRate.Value });
+                    newRates.Add(new ExchangeRateEntity { Ticker = ticker, Timestamp = thirdPartyRate.Key, Rate = thirdPartyRate.Value });
                 }
             }
 
             if (newRates.Count > 0)
             {
-                _exchangeRateRepository.InsertRates(newRates);
+                await _exchangeRateRepository.InsertManyAsync(newRates, cancellationToken);
             }
         }
 

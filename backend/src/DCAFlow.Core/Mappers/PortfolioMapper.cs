@@ -1,11 +1,11 @@
-﻿using DCAFlow.Contracts.Documents;
-using DCAFlow.Contracts.Models;
+﻿using DCAFlow.Contracts.Models;
+using DCAFlow.Data.Entities;
 
 namespace DCAFlow.Core.Mappers;
 
 public static class PortfolioMapper
 {
-    public static PortfolioModel Map(PortfolioDocument document)
+    public static PortfolioModel Map(PortfolioEntity document)
     {
         if (document is null)
         {

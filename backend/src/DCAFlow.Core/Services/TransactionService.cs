@@ -1,5 +1,5 @@
-﻿using DCAFlow.Contracts.Documents;
-using DCAFlow.Contracts.Models;
+﻿using DCAFlow.Contracts.Models;
+using DCAFlow.Data.Entities;
 using DCAFlow.Data.Repositories;
 
 namespace DCAFlow.Core.Services;
@@ -13,9 +13,9 @@ public sealed class TransactionService
         _transactionRepository = transactionRepository ?? throw new ArgumentNullException(nameof(transactionRepository));
     }
 
-    public Task AddTransactionAsync(TransactionModel transaction, CancellationToken cancellationToken = default)
+    public async Task AddTransactionAsync(TransactionModel transaction, CancellationToken cancellationToken = default)
     {
-        var document = new TransactionDocument
+        var document = new TransactionEntity
         {
             PortfolioId = transaction.PortfolioId,
             Ticker = transaction.Ticker,
@@ -25,15 +25,11 @@ public sealed class TransactionService
             Type = (int)transaction.Type
         };
 
-        _transactionRepository.Insert(document);
-
-        return Task.CompletedTask;
+        await _transactionRepository.InsertAsync(document, cancellationToken);
     }
 
-    public Task DeleteTransactionAsync(int transactionId, CancellationToken cancellationToken = default)
+    public async Task DeleteTransactionAsync(int transactionId, CancellationToken cancellationToken = default)
     {
-        _transactionRepository.Delete(transactionId);
-
-        return Task.CompletedTask;
+        await _transactionRepository.DeleteEntityByIdAsync(transactionId, cancellationToken);
     }
 }

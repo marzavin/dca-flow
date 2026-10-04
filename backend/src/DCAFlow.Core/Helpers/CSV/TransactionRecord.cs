@@ -1,8 +1,8 @@
-﻿using SideEffect.Data;
+﻿using DCAFlow.Contracts.Enums;
 
-namespace DCAFlow.Data.Entities;
+namespace DCAFlow.Core.Helpers.CSV;
 
-public class TransactionEntity : EntityBase
+public class TransactionRecord
 {
     public DateTime Timestamp { get; set; }
 
@@ -10,11 +10,9 @@ public class TransactionEntity : EntityBase
 
     public string Network { get; set; }
 
-    public int Type { get; set; }
+    public TransactionType Type { get; set; }
 
     public double Cost { get; set; }
 
     public double Amount { get; set; }
-
-    public int PortfolioId { get; set; }
 }

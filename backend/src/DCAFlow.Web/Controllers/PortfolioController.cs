@@ -20,4 +20,12 @@ public class PortfolioController : ControllerBase
         var model = await _portfolioService.GetPortfolioByIdAsync(portfolioId, cancellationToken);
         return Ok(model);
     }
+
+    [HttpPost("import/csv")]
+    public async Task<IActionResult> ImportPortfolioAsCsvAsync(IFormFile file, CancellationToken cancellationToken = default)
+    {
+        using var stream = file.OpenReadStream();
+        await _portfolioService.ImportPortfolioAsCsvFileAsync(file.Name, stream);
+        return NoContent();
+    }
 }

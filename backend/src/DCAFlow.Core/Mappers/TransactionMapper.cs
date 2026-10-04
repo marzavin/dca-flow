@@ -1,12 +1,12 @@
-﻿using DCAFlow.Contracts.Documents;
-using DCAFlow.Contracts.Enums;
+﻿using DCAFlow.Contracts.Enums;
 using DCAFlow.Contracts.Models;
+using DCAFlow.Data.Entities;
 
 namespace DCAFlow.Core.Mappers;
 
 public static class TransactionMapper
 {
-    public static TransactionModel Map(TransactionDocument document)
+    public static TransactionModel Map(TransactionEntity document)
     {
         if (document is null)
         {

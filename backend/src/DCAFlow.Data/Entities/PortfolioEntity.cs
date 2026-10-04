@@ -1,4 +1,6 @@
-﻿namespace DCAFlow.Data.Entities;
+﻿using SideEffect.Data;
+
+namespace DCAFlow.Data.Entities;
 
 public class PortfolioEntity : EntityBase
 {

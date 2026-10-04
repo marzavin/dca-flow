@@ -1,6 +1,9 @@
 ﻿using DCAFlow.Contracts.Enums;
 using DCAFlow.Contracts.Models;
+using DCAFlow.Core.Helpers.CSV;
 using DCAFlow.Core.Mappers;
+using DCAFlow.Data.Entities;
+using DCAFlow.Data.Filters;
 using DCAFlow.Data.Repositories;
 
 namespace DCAFlow.Core.Services;
@@ -23,13 +26,14 @@ public sealed class PortfolioService
 
     public async Task<PortfolioModel> GetPortfolioByIdAsync(int portfolioId, CancellationToken cancellationToken = default)
     {
-        var portfolioDocument = _portfolioRepository.GetPortfolioById(portfolioId)
+        var portfolioDocument = await _portfolioRepository.GetEntityByIdAsync(portfolioId, cancellationToken)
             ?? throw new ApplicationException($"Portfolio is not found by id ('{portfolioId}')");
 
         var portfolio = PortfolioMapper.Map(portfolioDocument);
 
-        var transactionDocuments = _transactionRepository.GetPortfolioTransactions(portfolioId);
-        var transactions = transactionDocuments?.Select(TransactionMapper.Map).ToList() ?? [];
+        var transactionFilter = new TransactionFilter { PortfolioIdEq = portfolioId };
+        var transactionEntities = await _transactionRepository.SearchAsync(transactionFilter, cancellationToken);
+        var transactions = transactionEntities?.Select(TransactionMapper.Map).ToList() ?? [];
 
         if (transactions.Count == 0)
         {
@@ -47,6 +51,16 @@ public sealed class PortfolioService
         await FillTimelineDataAsync(context, portfolio, cancellationToken);
 
         return portfolio;
+    }
+
+    public async Task ImportPortfolioAsCsvFileAsync(string name, Stream csvStream, CancellationToken cancellationToken = default)
+    {
+        var transactions = await FileHelper.ReadTransactionsAsync(csvStream);
+        
+        //TODO: Validate portfolio name
+        var portfolio = new PortfolioEntity { Name = name };
+
+        await _portfolioRepository.InsertAsync(portfolio, cancellationToken);
     }
 
     private async Task<PortfolioContextModel> InitPortfolioContextAsync(

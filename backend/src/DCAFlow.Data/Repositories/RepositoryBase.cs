@@ -1,6 +1,5 @@
-﻿using DCAFlow.Data.Entities;
-using DCAFlow.Data.Filters;
-using LiteDB;
+﻿using LiteDB;
+using SideEffect.Data;
 
 namespace DCAFlow.Data.Repositories;
 
@@ -42,6 +41,12 @@ public abstract class RepositoryBase<TEntity>
     public Task InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         Database.GetCollection<TEntity>(CollectionName).Insert(entity);
+        return Task.CompletedTask;
+    }
+
+    public Task InsertManyAsync(List<TEntity> entities, CancellationToken cancellationToken = default)
+    {
+        Database.GetCollection<TEntity>(CollectionName).Insert(entities);
         return Task.CompletedTask;
     }
 

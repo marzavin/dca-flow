@@ -1,10 +1,11 @@
-using DCAFlow.Contracts.Documents;
 using DCAFlow.Contracts.Interfaces;
 using DCAFlow.Core.Services;
+using DCAFlow.Data.Entities;
 using DCAFlow.Data.Repositories;
 using DCAFlow.Web.Providers;
 using DCAFlow.Web.Settings;
 using LiteDB;
+using SideEffect.Data;
 using System.Reflection;
 
 Directory.SetCurrentDirectory(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
@@ -26,10 +27,10 @@ var connectionString = builder.Configuration.GetConnectionString("LiteDB");
 builder.Services.AddSingleton(sp =>
 {
     var mapper = BsonMapper.Global;
-    mapper.Entity<DocumentBase>().Id(x => x.Id);
-    mapper.Entity<PortfolioDocument>().Id<>(x => x.Id);
-    mapper.Entity<TransactionDocument>().Id<>(x => x.Id);
-    mapper.Entity<ExchangeRateDocument>().Id<>(x => x.Id);
+    mapper.Entity<EntityBase>().Id(x => x.Id);
+    mapper.Entity<PortfolioEntity>().Id(x => x.Id);
+    mapper.Entity<TransactionEntity>().Id(x => x.Id);
+    mapper.Entity<ExchangeRateEntity>().Id(x => x.Id);
 
     return new LiteDatabase(connectionString, mapper);
 });
