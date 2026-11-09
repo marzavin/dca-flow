@@ -1,4 +1,5 @@
-﻿using DCAFlow.Core.Services;
+﻿using DCAFlow.Core.Metrics;
+using DCAFlow.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DCAFlow.Web.Controllers;
@@ -9,9 +10,14 @@ public class PortfolioController : ControllerBase
 {
     private readonly PortfolioService _portfolioService;
 
-    public PortfolioController(PortfolioService portfolioService)
+    private readonly MetricService _metricService;
+
+    public PortfolioController(
+        PortfolioService portfolioService,
+        MetricService metricService)
     {
         _portfolioService = portfolioService ?? throw new ArgumentNullException(nameof(portfolioService));
+        _metricService = metricService ?? throw new ArgumentNullException(nameof(metricService));
     }
 
     [HttpGet("{portfolioId:int}")]
@@ -19,6 +25,13 @@ public class PortfolioController : ControllerBase
     {
         var model = await _portfolioService.GetPortfolioByIdAsync(portfolioId, cancellationToken);
         return Ok(model);
+    }
+
+    [HttpGet("{portfolioId:int}/metrics")]
+    public async Task<IActionResult> GetMetricsAsync(int portfolioId, CancellationToken cancellationToken = default)
+    {
+        var metrics = await _metricService.GetPortfolioMetricsAsync(portfolioId, cancellationToken);
+        return Ok(metrics);
     }
 
     [HttpPost("import/csv")]

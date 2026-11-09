@@ -9,13 +9,13 @@ namespace DCAFlow.Web.Controllers;
 
 [ApiController]
 [Route("api/transactions")]
-public class TransactionsController : ControllerBase
+public class TransactionController : ControllerBase
 {
     private readonly TransactionService _transactionService;
 
     private readonly CoinService _coinService;
 
-    public TransactionsController(TransactionService transactionService, CoinService coinService)
+    public TransactionController(TransactionService transactionService, CoinService coinService)
     {
         _transactionService = transactionService ?? throw new ArgumentNullException(nameof(transactionService));
         _coinService = coinService ?? throw new ArgumentNullException(nameof(coinService));

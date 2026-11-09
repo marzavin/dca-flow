@@ -1,4 +1,6 @@
 using DCAFlow.Contracts.Interfaces;
+using DCAFlow.Core.ExchangeRates;
+using DCAFlow.Core.Metrics;
 using DCAFlow.Core.Services;
 using DCAFlow.Data.Entities;
 using DCAFlow.Data.Repositories;
@@ -45,16 +47,19 @@ builder.Services.AddHttpClient(DCAFlow.Web.Constants.HttpClients.CoinGeckoClient
     client.BaseAddress = new Uri(coinGeckoSetting.BaseUrl);
 });
 
+builder.Services.AddSingleton<IExchangeRateProvider, CoinGeckoRateProvider>();
+builder.Services.AddSingleton<ExchangeRateStorage>();
+
 builder.Services.AddScoped<TransactionRepository>();
 builder.Services.AddScoped<PortfolioRepository>();
 builder.Services.AddScoped<ExchangeRateRepository>();
 
-builder.Services.AddScoped<IExchangeRateProvider, CoinGeckoRateProvider>();
-
-builder.Services.AddScoped<CoinService>();
+builder.Services.AddSingleton<CoinService>();
 builder.Services.AddScoped<ExchangeRateService>();
 builder.Services.AddScoped<PortfolioService>();
 builder.Services.AddScoped<TransactionService>();
+
+builder.Services.AddScoped<MetricService>();
 
 builder.Services.AddControllers();
 
