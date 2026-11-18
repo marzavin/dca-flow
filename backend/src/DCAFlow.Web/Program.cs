@@ -1,4 +1,3 @@
-using DCAFlow.Contracts.Interfaces;
 using DCAFlow.Core.ExchangeRates;
 using DCAFlow.Core.Metrics;
 using DCAFlow.Core.Services;

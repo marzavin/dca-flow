@@ -1,4 +1,4 @@
-﻿namespace DCAFlow.Contracts.Models;
+﻿namespace DCAFlow.Core.Common.Models;
 
 public class CoinModel
 {

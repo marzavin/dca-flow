@@ -1,5 +1,4 @@
-﻿using DCAFlow.Contracts.Interfaces;
-using DCAFlow.Contracts.Models;
+﻿using DCAFlow.Contracts.Models;
 
 namespace DCAFlow.Core.ExchangeRates;
 

@@ -1,6 +1,6 @@
 ﻿using DCAFlow.Contracts.Models;
 
-namespace DCAFlow.Contracts.Interfaces;
+namespace DCAFlow.Core.ExchangeRates;
 
 public interface IExchangeRateProvider
 {

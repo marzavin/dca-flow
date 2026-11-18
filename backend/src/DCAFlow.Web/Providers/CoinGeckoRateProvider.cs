@@ -1,5 +1,5 @@
-﻿using DCAFlow.Contracts.Interfaces;
-using DCAFlow.Contracts.Models;
+﻿using DCAFlow.Contracts.Models;
+using DCAFlow.Core.ExchangeRates;
 using DCAFlow.Core.Services;
 using DCAFlow.Web.Settings;
 using System.Text.Json;
