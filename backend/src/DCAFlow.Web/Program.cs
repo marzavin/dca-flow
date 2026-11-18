@@ -2,6 +2,7 @@ using DCAFlow.Contracts.Interfaces;
 using DCAFlow.Core.ExchangeRates;
 using DCAFlow.Core.Metrics;
 using DCAFlow.Core.Services;
+using DCAFlow.Core.Transactions;
 using DCAFlow.Data.Entities;
 using DCAFlow.Data.Repositories;
 using DCAFlow.Web.Providers;
@@ -30,9 +31,7 @@ builder.Services.AddSingleton(sp =>
 {
     var mapper = BsonMapper.Global;
     mapper.Entity<EntityBase>().Id(x => x.Id);
-    mapper.Entity<PortfolioEntity>().Id(x => x.Id);
     mapper.Entity<TransactionEntity>().Id(x => x.Id);
-    mapper.Entity<ExchangeRateEntity>().Id(x => x.Id);
 
     return new LiteDatabase(connectionString, mapper);
 });
@@ -51,11 +50,8 @@ builder.Services.AddSingleton<IExchangeRateProvider, CoinGeckoRateProvider>();
 builder.Services.AddSingleton<ExchangeRateStorage>();
 
 builder.Services.AddScoped<TransactionRepository>();
-builder.Services.AddScoped<PortfolioRepository>();
-builder.Services.AddScoped<ExchangeRateRepository>();
 
 builder.Services.AddSingleton<CoinService>();
-builder.Services.AddScoped<ExchangeRateService>();
 builder.Services.AddScoped<PortfolioService>();
 builder.Services.AddScoped<TransactionService>();
 

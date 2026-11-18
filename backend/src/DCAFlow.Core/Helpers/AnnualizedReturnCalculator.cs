@@ -1,8 +1,8 @@
 ﻿using DCAFlow.Contracts.Models;
 
-namespace DCAFlow.Core.Services;
+namespace DCAFlow.Core.Helpers;
 
-public static class AnnualizedReturnCalculator
+internal static class AnnualizedReturnCalculator
 {
     public static double CalculateAnnualizedReturn(List<CashFlowModel> transactions, double guess = 0.1, double tolerance = 0.000001, int maxIterations = 100)
     {

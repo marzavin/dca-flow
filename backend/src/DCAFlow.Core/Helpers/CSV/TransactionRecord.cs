@@ -1,4 +1,4 @@
-﻿using DCAFlow.Contracts.Enums;
+﻿using DCAFlow.Core.Transactions.Enums;
 
 namespace DCAFlow.Core.Helpers.CSV;
 

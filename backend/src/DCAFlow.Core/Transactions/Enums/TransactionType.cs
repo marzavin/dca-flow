@@ -1,9 +1,12 @@
-﻿namespace DCAFlow.Contracts.Enums;
+﻿namespace DCAFlow.Core.Transactions.Enums;
 
 public enum TransactionType
 {
     Buy = 1,
+
     Sell = 2,
+
     TransferIn = 3,
+
     TransferOut = 4
 }

@@ -3,7 +3,7 @@ using DCAFlow.Core.Metrics.Enums;
 
 namespace DCAFlow.Core.Metrics.Models;
 
-public class MetricModel
+public class MetricViewModel
 {
     public MetricType Type { get; set; }
 

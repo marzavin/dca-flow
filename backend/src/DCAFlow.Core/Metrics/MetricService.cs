@@ -1,16 +1,16 @@
-﻿using DCAFlow.Contracts.Enums;
-using DCAFlow.Contracts.Models;
+﻿using DCAFlow.Contracts.Models;
 using DCAFlow.Core.ExchangeRates;
+using DCAFlow.Core.Helpers;
 using DCAFlow.Core.Metrics.Enums;
 using DCAFlow.Core.Metrics.Models;
-using DCAFlow.Core.Services;
+using DCAFlow.Core.Transactions.Enums;
 using DCAFlow.Data.Entities;
 using DCAFlow.Data.Filters;
 using DCAFlow.Data.Repositories;
 
 namespace DCAFlow.Core.Metrics;
 
-public class MetricService
+public sealed class MetricService
 {
     private readonly TransactionRepository _transactionRepository;
 
@@ -22,9 +22,9 @@ public class MetricService
         _exchangeRateStorage = exchangeRateStorage ?? throw new ArgumentNullException(nameof(exchangeRateStorage));
     }
 
-    public async Task<List<MetricModel>> GetPortfolioMetricsAsync(int portfolioId, CancellationToken cancellationToken = default)
+    public async Task<List<MetricViewModel>> GetMetricsAsync(string tag, CancellationToken cancellationToken = default)
     {
-        var filter = new TransactionFilter { PortfolioIdEq = portfolioId };
+        var filter = new TransactionFilter { TagEq = TagHelper.NormalizeTag(tag) };
         var transactions = await _transactionRepository.SearchAsync(filter, cancellationToken);
         if (transactions is null || transactions.Count == 0)
         {
@@ -93,14 +93,14 @@ public class MetricService
         };
     }
 
-    private static double? CalculateAnnualizedReturn(List<TransactionEntity> transactions, DateTime timestamp, double holdingsValue)
+    private static double? CalculateAnnualizedReturn(List<TransactionEntity> transactions, DateTime timestamp, double totalHoldings)
     {
         if (transactions.Count == 0)
         {
             return null;
         }
 
-        var cashFlows = GetCashFlowRecords(transactions, timestamp, holdingsValue);
+        var cashFlows = GetCashFlowRecords(transactions, timestamp, totalHoldings);
 
         try
         {
@@ -112,7 +112,7 @@ public class MetricService
         }
     }
 
-    private static List<CashFlowModel> GetCashFlowRecords(List<TransactionEntity> transactions, DateTime timestamp, double holdingsValue)
+    private static List<CashFlowModel> GetCashFlowRecords(List<TransactionEntity> transactions, DateTime timestamp, double totalHoldings)
     {
         var cashFlows = transactions
             .Where(x => (x.Type == (int)TransactionType.Buy || x.Type == (int)TransactionType.Sell) && timestamp > x.Timestamp)
@@ -123,22 +123,22 @@ public class MetricService
             })
             .ToList();
 
-        cashFlows.Add(new CashFlowModel { Timestamp = timestamp, Value = holdingsValue });
+        cashFlows.Add(new CashFlowModel { Timestamp = timestamp, Value = totalHoldings });
 
         return cashFlows;
     }
 
-    private static List<MetricModel> BuildEmptyMetrics()
+    private static List<MetricViewModel> BuildEmptyMetrics()
     {
-        return Enum.GetValues<MetricType>().Select(x => new MetricModel { Type = x, Value = null, Trend = [] }).ToList();
+        return Enum.GetValues<MetricType>().Select(x => new MetricViewModel { Type = x, Value = null, Trend = [] }).ToList();
     }
 
-    private static List<MetricModel> ConvertToMetrics(Dictionary<MetricType, double?> metricValues)
+    private static List<MetricViewModel> ConvertToMetrics(Dictionary<MetricType, double?> metricValues)
     {
-        return [.. metricValues.Select(x => new MetricModel { Type = x.Key, Value = x.Value, Trend = [] })];
+        return [.. metricValues.Select(x => new MetricViewModel { Type = x.Key, Value = x.Value, Trend = [] })];
     }
 
-    private static void AddValuesOnDate(List<MetricModel> metrics, DateOnly ts, Dictionary<MetricType, double?> metricValues)
+    private static void AddValuesOnDate(List<MetricViewModel> metrics, DateOnly ts, Dictionary<MetricType, double?> metricValues)
     {
         foreach (var metric in metrics)
         {
@@ -150,14 +150,14 @@ public class MetricService
         }
     }
 
-    private static double CalculateTotalReturn(double invested, double value)
+    private static double CalculateTotalReturn(double totalInvestments, double totalHoldings)
     {
-        if (invested < double.Epsilon)
+        if (totalInvestments < double.Epsilon)
         {
             return 1D;
         }
 
-        return (value - invested) / invested;
+        return (totalHoldings - totalInvestments) / totalInvestments;
     }
 
     private static double GetInvestmentValue(TransactionType type, double value)

@@ -16,5 +16,5 @@ public class TransactionEntity : EntityBase
 
     public double Amount { get; set; }
 
-    public int PortfolioId { get; set; }
+    public List<string> Tags { get; set; }
 }

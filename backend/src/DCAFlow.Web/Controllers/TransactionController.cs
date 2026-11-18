@@ -1,6 +1,8 @@
-﻿using DCAFlow.Contracts.Enums;
-using DCAFlow.Contracts.Models;
+﻿using DCAFlow.Contracts.Models;
 using DCAFlow.Core.Services;
+using DCAFlow.Core.Transactions;
+using DCAFlow.Core.Transactions.Enums;
+using DCAFlow.Core.Transactions.Models;
 using DCAFlow.Web.Models;
 using DCAFlow.Web.Validators;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +23,13 @@ public class TransactionController : ControllerBase
         _coinService = coinService ?? throw new ArgumentNullException(nameof(coinService));
     }
 
+    [HttpGet("{tag}")]
+    public async Task<IActionResult> GetTransactionsAsync([FromRoute] string tag = null, CancellationToken cancellationToken = default)
+    {
+        var transactions = await _transactionService.GetTransactionsAsync(tag, cancellationToken);
+        return Ok(transactions);
+    }
+
     [HttpPost]
     public async Task<IActionResult> AddTransaction([FromBody] TransactionModel model, CancellationToken cancellationToken = default)
     {
@@ -39,7 +48,7 @@ public class TransactionController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{transactionId}")]
+    [HttpDelete("{transactionId:int}")]
     public async Task<IActionResult> DeleteTransaction([FromRoute] int transactionId, CancellationToken cancellationToken = default)
     {
         await _transactionService.DeleteTransactionAsync(transactionId, cancellationToken);
