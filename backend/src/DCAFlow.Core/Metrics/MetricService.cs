@@ -1,4 +1,4 @@
-﻿using DCAFlow.Contracts.Models;
+﻿using DCAFlow.Core.Common;
 using DCAFlow.Core.ExchangeRates;
 using DCAFlow.Core.Helpers;
 using DCAFlow.Core.Metrics.Enums;
@@ -48,7 +48,7 @@ public sealed class MetricService
             AddValuesOnDate(result, ts, metricValues);
         }
 
-        return result;
+        return [.. result.OrderBy(x => x.Type)];
     }
 
     private async Task<Dictionary<MetricType, double?>> GetMetricsOnDateAsync(
@@ -93,7 +93,7 @@ public sealed class MetricService
         };
     }
 
-    private static double? CalculateAnnualizedReturn(List<TransactionEntity> transactions, DateTime timestamp, double totalHoldings)
+    public static double? CalculateAnnualizedReturn(List<TransactionEntity> transactions, DateTime timestamp, double totalHoldings)
     {
         if (transactions.Count == 0)
         {
@@ -112,7 +112,7 @@ public sealed class MetricService
         }
     }
 
-    private static List<CashFlowModel> GetCashFlowRecords(List<TransactionEntity> transactions, DateTime timestamp, double totalHoldings)
+    public static List<CashFlowModel> GetCashFlowRecords(List<TransactionEntity> transactions, DateTime timestamp, double totalHoldings)
     {
         var cashFlows = transactions
             .Where(x => (x.Type == (int)TransactionType.Buy || x.Type == (int)TransactionType.Sell) && timestamp > x.Timestamp)

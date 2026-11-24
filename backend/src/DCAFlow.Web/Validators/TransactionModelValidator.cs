@@ -1,4 +1,4 @@
-﻿using DCAFlow.Contracts.Models;
+﻿using DCAFlow.Core.Coins.Models;
 using DCAFlow.Core.Transactions.Enums;
 using DCAFlow.Core.Transactions.Models;
 using FluentValidation;

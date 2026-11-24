@@ -1,4 +1,4 @@
-﻿using DCAFlow.Core.Services;
+﻿using DCAFlow.Core.Coins;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DCAFlow.Web.Controllers;
@@ -15,8 +15,9 @@ public class CoinController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetSupportedCoins()
+    public async Task<IActionResult> GetSupportedCoinsAsync()
     {
-        return Ok(_coinService.GetSupportedCoins());
+        var supportedCoins = _coinService.GetSupportedCoins();
+        return Ok(supportedCoins);
     }
 }

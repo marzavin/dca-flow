@@ -49,6 +49,6 @@ public sealed class TransactionService
 
         return transactions.IsEmpty()
             ? []
-            : [.. transactions.Select(TransactionMapper.Map)];
+            : [.. transactions.OrderByDescending(x => x.Timestamp).Select(TransactionMapper.Map)];
     }
 }

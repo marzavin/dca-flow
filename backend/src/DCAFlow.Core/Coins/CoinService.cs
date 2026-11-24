@@ -1,6 +1,6 @@
-﻿using DCAFlow.Contracts.Models;
+﻿using DCAFlow.Core.Coins.Models;
 
-namespace DCAFlow.Core.Services;
+namespace DCAFlow.Core.Coins;
 
 public sealed class CoinService
 {

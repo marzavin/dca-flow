@@ -1,5 +1,5 @@
-﻿using DCAFlow.Contracts.Models;
-using DCAFlow.Core.Services;
+﻿using DCAFlow.Core.Coins;
+using DCAFlow.Core.Common;
 using DCAFlow.Core.Transactions;
 using DCAFlow.Core.Transactions.Enums;
 using DCAFlow.Core.Transactions.Models;
@@ -23,6 +23,7 @@ public class TransactionController : ControllerBase
         _coinService = coinService ?? throw new ArgumentNullException(nameof(coinService));
     }
 
+    [HttpGet]
     [HttpGet("{tag}")]
     public async Task<IActionResult> GetTransactionsAsync([FromRoute] string tag = null, CancellationToken cancellationToken = default)
     {
@@ -33,7 +34,8 @@ public class TransactionController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddTransaction([FromBody] TransactionModel model, CancellationToken cancellationToken = default)
     {
-        var validator = new TransactionModelValidator(_coinService.GetSupportedCoins());
+        var supportedCoins = _coinService.GetSupportedCoins();
+        var validator = new TransactionModelValidator(supportedCoins);
         var validationResult = await validator.ValidateAsync(model, cancellationToken);
         if (!validationResult.IsValid)
         {

@@ -1,4 +1,4 @@
-﻿namespace DCAFlow.Core.Common.Models;
+﻿namespace DCAFlow.Core.Common;
 
 public class CashFlowModel
 {

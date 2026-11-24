@@ -1,4 +1,4 @@
-﻿using DCAFlow.Contracts.Models;
+﻿using DCAFlow.Core.Common;
 using DCAFlow.Core.Metrics.Enums;
 
 namespace DCAFlow.Core.Metrics.Models;

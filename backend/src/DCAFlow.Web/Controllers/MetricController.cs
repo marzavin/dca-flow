@@ -14,6 +14,7 @@ public class MetricController : ControllerBase
         _metricService = metricService ?? throw new ArgumentNullException(nameof(metricService));
     }
 
+    [HttpGet]
     [HttpGet("{tag}")]
     public async Task<IActionResult> GetMetricsAsync([FromRoute] string tag = null, CancellationToken cancellationToken = default)
     {

@@ -1,6 +1,7 @@
-﻿using DCAFlow.Contracts.Models;
+﻿using DCAFlow.Core.Coins;
+using DCAFlow.Core.Coins.Models;
+using DCAFlow.Core.Common;
 using DCAFlow.Core.ExchangeRates;
-using DCAFlow.Core.Services;
 using DCAFlow.Web.Settings;
 using System.Text.Json;
 using static DCAFlow.Web.Constants;

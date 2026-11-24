@@ -1,6 +1,8 @@
+using DCAFlow.Core.Assets;
+using DCAFlow.Core.Charts;
+using DCAFlow.Core.Coins;
 using DCAFlow.Core.ExchangeRates;
 using DCAFlow.Core.Metrics;
-using DCAFlow.Core.Services;
 using DCAFlow.Core.Transactions;
 using DCAFlow.Data.Entities;
 using DCAFlow.Data.Repositories;
@@ -51,10 +53,10 @@ builder.Services.AddSingleton<ExchangeRateStorage>();
 builder.Services.AddScoped<TransactionRepository>();
 
 builder.Services.AddSingleton<CoinService>();
-builder.Services.AddScoped<PortfolioService>();
-builder.Services.AddScoped<TransactionService>();
-
+builder.Services.AddScoped<AssetService>();
+builder.Services.AddScoped<ChartService>();
 builder.Services.AddScoped<MetricService>();
+builder.Services.AddScoped<TransactionService>();
 
 builder.Services.AddControllers();
 

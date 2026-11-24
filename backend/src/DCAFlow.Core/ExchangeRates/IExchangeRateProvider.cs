@@ -1,4 +1,4 @@
-﻿using DCAFlow.Contracts.Models;
+﻿using DCAFlow.Core.Common;
 
 namespace DCAFlow.Core.ExchangeRates;
 
