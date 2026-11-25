@@ -15,22 +15,10 @@ public sealed class ChartService
 
     private readonly ExchangeRateStorage _exchangeRateStorage;
 
-    private readonly AssetService _assetService;
-
-    public ChartService(TransactionRepository transactionRepository, ExchangeRateStorage exchangeRateStorage, AssetService assetService)
+    public ChartService(TransactionRepository transactionRepository, ExchangeRateStorage exchangeRateStorage)
     {
         _transactionRepository = transactionRepository ?? throw new ArgumentNullException(nameof(transactionRepository));
         _exchangeRateStorage = exchangeRateStorage ?? throw new ArgumentNullException(nameof(exchangeRateStorage));
-        _assetService = assetService ?? throw new ArgumentNullException(nameof(assetService));
-    }
-
-    public async Task<List<KeyValueModel<string, double>>> GetAllocationChartAsync(string tag, CancellationToken cancellationToken = default)
-    {
-        var assets = await _assetService.GetAssetsAsync(tag, cancellationToken);
-
-        var totalHoldings = assets.Sum(x => x.TotalHoldings);
-
-        return [.. assets.Select(x => new KeyValueModel<string, double> { Key = x.Ticker, Value = x.TotalHoldings / totalHoldings })];
     }
 
     public async Task<List<PerformanceOnDate>> GetPerformanceChartAsync(string tag, CancellationToken cancellationToken = default)

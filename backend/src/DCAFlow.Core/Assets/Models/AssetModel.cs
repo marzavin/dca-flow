@@ -17,4 +17,6 @@ public class AssetModel
     public double ProfitAndLoss { get; set; }
 
     public double ReturnOfInvestments { get; set; }
+
+    public double Share { get; set; }
 }

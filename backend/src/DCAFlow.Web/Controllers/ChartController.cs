@@ -14,14 +14,6 @@ public class ChartController : ControllerBase
         _chartService = chartService ?? throw new ArgumentNullException(nameof(chartService));
     }
 
-    [HttpGet("allocation")]
-    [HttpGet("allocation/{tag}")]
-    public async Task<IActionResult> GetAllocationChartAsync([FromRoute] string tag = null, CancellationToken cancellationToken = default)
-    {
-        var metrics = await _chartService.GetAllocationChartAsync(tag, cancellationToken);
-        return Ok(metrics);
-    }
-
     [HttpGet("performance")]
     [HttpGet("performance/{tag}")]
     public async Task<IActionResult> GetPerformanceChartAsync([FromRoute] string tag = null, CancellationToken cancellationToken = default)

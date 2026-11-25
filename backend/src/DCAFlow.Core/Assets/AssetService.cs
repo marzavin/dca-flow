@@ -1,5 +1,6 @@
 ﻿using DCAFlow.Core.Assets.Models;
 using DCAFlow.Core.Coins.Models;
+using DCAFlow.Core.Common;
 using DCAFlow.Core.ExchangeRates;
 using DCAFlow.Core.Helpers;
 using DCAFlow.Core.Transactions.Enums;
@@ -33,11 +34,20 @@ public sealed class AssetService
 
         var assets = new List<AssetModel>();
 
+        var totalHoldings = 0D;
+
         var grouped = transactions.GroupBy(x => x.Ticker).ToDictionary(x => x.Key, x => x.ToList());
         foreach (var tickerGroup in grouped)
         {
             var asset = await GetAssetAsync(tickerGroup.Value, cancellationToken);
             assets.Add(asset);
+
+            totalHoldings += asset.TotalHoldings;
+        }
+
+        foreach (var asset in assets)
+        {
+            asset.Share = asset.TotalHoldings / totalHoldings;
         }
 
         return assets;
